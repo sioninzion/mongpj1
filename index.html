@@ -28,6 +28,30 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
   background:rgba(255,255,255,.08);font-size:22px;font-weight:850}
 .big.primary{background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(247,200,95,.16))}
 
+/* CODE MODAL */
+.modal{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.78);
+  backdrop-filter:blur(16px);display:none;place-items:center;padding:20px}
+.modal.active{display:grid}
+.mbox{width:min(420px,100%);background:#0d0f14;border:1px solid rgba(255,255,255,.14);
+  border-radius:28px;padding:32px 28px;display:grid;gap:20px;text-align:center}
+.mbox .logo{width:56px;height:56px}
+.mbox h2{font-size:22px;font-weight:900}
+.mbox p{color:rgba(248,250,252,.56);font-size:13.5px;line-height:1.65}
+.coderow{display:flex;gap:10px;justify-content:center}
+.cd{width:64px;height:72px;border:1px solid rgba(255,255,255,.2);border-radius:16px;
+  background:rgba(255,255,255,.07);font-size:36px;font-weight:900;text-align:center;
+  color:#f8fafc;outline:none;caret-color:#f7c85f;
+  -moz-appearance:textfield;appearance:textfield}
+.cd::-webkit-inner-spin-button,.cd::-webkit-outer-spin-button{-webkit-appearance:none}
+.cd:focus{border-color:rgba(247,200,95,.58);background:rgba(247,200,95,.07);
+  box-shadow:0 0 22px rgba(247,200,95,.14)}
+.mbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mbtns button{min-height:52px;border:1px solid rgba(255,255,255,.14);border-radius:14px;
+  background:rgba(255,255,255,.07);font-size:16px;font-weight:800}
+.mbtns .mprimary{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(247,200,95,.14));
+  border-color:rgba(247,200,95,.3)}
+.code-hint{font-size:12px;color:rgba(248,250,252,.38);margin-top:-6px}
+
 /* PRESENTATION */
 .presentation{position:relative;background:#030407;overflow:hidden}
 .presentation canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -117,15 +141,35 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
   </div>
 </section>
 
+<!-- CODE ENTRY MODAL -->
+<div class="modal" id="codeModal">
+  <div class="mbox">
+    <div class="logo"></div>
+    <h2>프레젠테이션 코드</h2>
+    <p>0000~9999 중 4자리 코드를 입력하세요.<br>같은 코드로 시작한 화면들은 하나의 리모컨으로 함께 제어됩니다.</p>
+    <div class="coderow">
+      <input class="cd" id="cd0" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
+      <input class="cd" id="cd1" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
+      <input class="cd" id="cd2" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
+      <input class="cd" id="cd3" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
+    </div>
+    <p class="code-hint">리모컨에서도 같은 4자리 코드를 입력하세요</p>
+    <div class="mbtns">
+      <button id="cancelModal">취소</button>
+      <button class="mprimary" id="confirmModal">시작</button>
+    </div>
+  </div>
+</div>
+
 <!-- PRESENTATION -->
 <section class="screen presentation" id="presentationScreen">
   <canvas id="cinema"></canvas>
   <audio class="bgm" id="bgmAudio" src="audio/Pray - David Tolk.mp3" preload="auto" loop muted></audio>
   <div class="ui" id="cinemaUi">
     <div class="top">
-      <button class="icon" id="homeFromPresentation">‹</button>
-      <button class="icon" id="fullScreenButton">⛶</button>
-      <button class="icon" id="musicButton" aria-label="Toggle music" title="Toggle music">♪</button>
+      <button class="icon" id="homeFromPresentation">&#8617;</button>
+      <button class="icon" id="fullScreenButton">&#9654;</button>
+      <button class="icon" id="musicButton" aria-label="Toggle music" title="Toggle music">&#9836;</button>
     </div>
     <div class="label">
       <small id="chapterSmall">Chapter 01</small>
@@ -135,8 +179,8 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
       <div class="panel roompanel">
         <div class="qr" id="qrCode"></div>
         <div>
-          <span class="meta">Room ID</span>
-          <div class="room" id="presentationRoom">------</div>
+          <span class="meta">Code</span>
+          <div class="room" id="presentationRoom">----</div>
           <div class="link" id="remoteLink"></div>
         </div>
       </div>
@@ -152,34 +196,34 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
 <!-- REMOTE -->
 <section class="screen remote" id="remoteScreen">
   <div class="rshell">
-    <button class="icon" id="homeFromRemote">‹</button>
+    <button class="icon" id="homeFromRemote">&#8617;</button>
     <div class="card rtop">
       <div>
-        <span class="meta">Connected Room</span>
-        <strong id="remoteRoom">------</strong>
+        <span class="meta">Connected Code</span>
+        <strong id="remoteRoom">----</strong>
       </div>
       <div class="conn">
         <span class="dot" id="connectionDot"></span>
         <span id="connectionText">Waiting</span>
       </div>
       <div class="rvolume">
-        <span>♪</span>
+        <span>&#9836;</span>
         <input id="musicVolume" type="range" min="0" max="100" value="72" aria-label="Music volume" title="Music volume"/>
         <span id="musicVolumeLabel">72%</span>
       </div>
     </div>
     <div class="remote-controls">
-      <button class="rbtn" id="previousChapter" aria-label="Previous chapter" title="Previous chapter">◀</button>
-      <button class="rbtn" id="nextChapter" aria-label="Next chapter" title="Next chapter">▶</button>
-      <button class="rbtn" id="toggleFullscreen" aria-label="Toggle fullscreen" title="Toggle fullscreen">⛶</button>
-      <button class="rbtn" id="toggleMusic" aria-label="Toggle music" title="Toggle music">♪</button>
-      <button class="rbtn" id="sphereGallery" aria-label="Gospel spheres" title="Gospel spheres">○</button>
-      <button class="rbtn" id="calibrateBtn" aria-label="Set position" title="Set position">📍</button>
+      <button class="rbtn" id="previousChapter" aria-label="Previous chapter" title="Previous chapter">&#9664;</button>
+      <button class="rbtn" id="nextChapter" aria-label="Next chapter" title="Next chapter">&#9654;</button>
+      <button class="rbtn" id="toggleFullscreen" aria-label="Toggle fullscreen" title="Toggle fullscreen">&#9654;</button>
+      <button class="rbtn" id="toggleMusic" aria-label="Toggle music" title="Toggle music">&#9836;</button>
+      <button class="rbtn" id="sphereGallery" aria-label="Gospel spheres" title="Gospel spheres">&#9678;</button>
+      <button class="rbtn" id="calibrateBtn" aria-label="Set position" title="Set position">&#128247;</button>
     </div>
     <div class="card" id="manualRoomCard">
-      <span class="meta">Manual Connect</span>
+      <span class="meta">4자리 코드로 연결</span>
       <div class="manual">
-        <input id="manualRoomInput" maxlength="12" placeholder="ROOM ID"/>
+        <input id="manualRoomInput" maxlength="4" placeholder="0000" inputmode="numeric"/>
         <button class="rbtn" id="manualRoomConnect">Connect</button>
       </div>
     </div>
@@ -192,18 +236,15 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import{getDatabase,ref,set,onValue}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+import{getDatabase,ref,set,onValue,get}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
 const firebaseConfig={apiKey:"AIzaSyChDJWmEsddYz178QLa6VCF5Xq9gS3uRAs",authDomain:"mongpj1.firebaseapp.com",databaseURL:"https://mongpj1-default-rtdb.firebaseio.com",projectId:"mongpj1",storageBucket:"mongpj1.firebasestorage.app",messagingSenderId:"525975516949",appId:"1:525975516949:web:babf2d21760764db219b1c"};
 
-// This build is organized as 8 controllable chapters.
-// Some drawPrototypeNailing+ helpers below are retained as visual modules/prototypes,
-// but the remote, labels, Firebase state, and render timeline all use Chapter 1-8.
 const TOTAL=8;
 const CHAPTER_INFO=[
-  ['순수한 세계'],
+  ['태초의 세계'],
   ['이야기의 시작'],
-  ['금색 재형성'],
+  ['금색 찬란함'],
   ['추락'],
   ['죄'],
   ['새로운 시작'],
@@ -215,48 +256,29 @@ const $=s=>document.querySelector(s);
 const canvas=$('#cinema'), ctx=canvas.getContext('2d');
 let W=innerWidth, H=innerHeight, DPR=1;
 
-// ─── State ─────────────────────────────────────────────────────────────────
-// Naming rule: UI/docs call the controllable units "chapters".
-// Firebase writes still use the key "scene" for compatibility with older remotes.
-// ─── Timeline engine ──────────────────────────────────────────────────────────
-// T  : current timeline position in seconds (continuously flowing)
-// Tgt: target T we are tweening toward
-// Each chapter N has a "checkpoint" = the T value where that chapter's narrative
-// is fully settled (presenter pauses here to talk).
-// When the chapter advances, Tgt jumps to the next checkpoint and T chases it.
-// When the chapter goes backward, T snaps directly (instant rewind).
-//
-// Chapter durations (seconds between checkpoints):
-const CK_DUR=[
-  0,    // chapter 1  start  T=0
-  9,    // chapter 1  순수한 세계
-  11,   // chapter 2  spin+blast
-  11,   // chapter 3  vortex+gold → 흰 공간
-  13,   // chapter 4  흰 배경 깨짐 → 검은 골목 → 스피어 검게
-  13,   // chapter 5  검은→빨강
-  32,   // chapter 6  new beginning (꼬리 fade out → 입자별 흰색 전환)
-  9,    // chapter 7  seed
-  13,   // chapter 8  sprout
-];
-// Precompute checkpoint T values
-const CK=CK_DUR.reduce((acc,d,i)=>{acc.push(i===0?0:acc[i-1]+d);return acc;},[]);
-const TMAX=CK[CK.length-1];
-
 const S={mode:'home',roomId:'',chapter:1,prevChapter:1,
-  // timeline
-  T:0,          // current rendered T
-  Tgt:0,        // target T (what we're animating toward)
-  Tspeed:1,     // playback speed multiplier while tweening
-  lastRealTime:performance.now(),
+  T:0,Tgt:0,Tspeed:1,lastRealTime:performance.now(),
   black:false,immersive:false,gallery:false,music:false,musicVolume:.72,musicFade:null,galleryProg:0,db:null,ready:false,unsub:null,remoteColor:'#ffd166',particles:[],
   lemOff:{bx:0,by:0},phoneOffset:{x:0,y:0},phoneOffsetTarget:{x:0,y:0}};
 
-// ─── Particle pools ─────────────────────────────────────────────────────────
+const CK_DUR=[
+  0,
+  9,
+  11,
+  11,
+  13,
+  13,
+  32,
+  9,
+  13,
+];
+const CK=CK_DUR.reduce((acc,d,i)=>{acc.push(i===0?0:acc[i-1]+d);return acc;},[]);
+const TMAX=CK[CK.length-1];
+
 let sphere=[], stars=[], rain=[], wind=[], dust=[];
 let castlePts=[], crossPts=[];
 let chapter8TerrainCache=null;
 
-// ─── Math helpers ───────────────────────────────────────────────────────────
 const rnd=(a=1,b=0)=>Math.random()*(a-b)+b;
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
 const mix=(a,b,t)=>a+(b-a)*t;
@@ -267,23 +289,16 @@ function rgba(c,a){
   if(c.startsWith('rgb')){const m=c.match(/(\d+),\s*(\d+),\s*(\d+)/);if(m)return`rgba(${m[1]},${m[2]},${m[3]},${a})`;}
   const[r,g,b]=hex(c);return`rgba(${r},${g},${b},${a})`;
 }
-// Deterministic pseudo-random (no flicker on re-render)
 function stableNoise(i,salt=0){return Math.abs(Math.sin(i*127.1+salt*311.7)*43758.5453)%1}
 
-// ─── Build world ────────────────────────────────────────────────────────────
 function makeWorld(){
-  // Stars
   stars=Array.from({length:220},()=>({x:rnd(W),y:rnd(H),r:rnd(1.3,.18),a:rnd(.8,.1),tw:rnd(.022,.003)}));
-
-  // Sphere — Fibonacci lattice, 1400 pts
   sphere=Array.from({length:1400},(_,i)=>{
     const t=(i+.5)/1400,phi=Math.acos(1-2*t),th=Math.PI*(1+Math.sqrt(5))*i;
     return{x:Math.sin(phi)*Math.cos(th),y:Math.sin(phi)*Math.sin(th),z:Math.cos(phi),
       s:rnd(1.85,.65),seed:rnd(Math.PI*2),special:false,color:'#f8fbff',
-      // blast off-screen target (stable)
       bx:(Math.random()-.5)*4,by:(Math.random()-.5)*4};
   });
-
   rain=Array.from({length:500},()=>({x:rnd(W),y:rnd(H),l:rnd(28,8),v:rnd(20,8)}));
   wind=Array.from({length:300},()=>({x:rnd(W),y:rnd(H),v:rnd(8,2.5),r:rnd(2,.4),a:rnd(.55,.1)}));
   dust=Array.from({length:280},()=>({x:rnd(W),y:rnd(H),z:rnd(1,.04),v:rnd(3,.5),r:rnd(3,.6)}));
@@ -293,20 +308,14 @@ function makeWorld(){
 
 function makeCastle(){
   castlePts=[];
-  // base: 성 기저선. H*0.58로 올려서 성이 화면 위쪽에 크게 보이도록
   const cx=W/2, base=H*.58, sc=Math.min(W,H)/520;
   function rect(x,y,w,h,n){for(let i=0;i<n;i++)castlePts.push({x:cx+(x+rnd(w)-w/2)*sc,y:base+(y+rnd(h))*sc,seed:rnd(6.28)})}
   function tri(x,y,w,h,n){for(let i=0;i<n;i++){let u=Math.random(),v=Math.random();if(u+v>1){u=1-u;v=1-v}castlePts.push({x:cx+(x+(u-.5)*w)*sc,y:base+(y-v*h)*sc,seed:rnd(6.28)})}}
-  // 본체
   rect(0,-160,280,160,1400);
-  // 양쪽 탑
   rect(-160,-230,80,230,800);rect(160,-230,80,230,800);
-  // 중앙 높은 탑
   rect(0,-310,100,310,900);
-  // 탑 지붕(삼각형)
   tri(-160,-230,110,110,560);tri(160,-230,110,110,560);
   tri(0,-310,140,130,700);
-  // 옆 작은 탑
   rect(-268,-115,105,115,560);rect(268,-115,105,115,560);
   tri(-268,-115,125,85,380);tri(268,-115,125,85,380);
 }
@@ -329,8 +338,6 @@ function resize(){
   makeWorld();
 }
 addEventListener('resize',resize);
-
-// ─── Draw helpers ────────────────────────────────────────────────────────────
 
 function drawStars(alpha=1){
   ctx.save(); ctx.globalAlpha=alpha;
@@ -371,9 +378,7 @@ function mixRgb(a,b,t){return [Math.round(mix(a[0],b[0],t)),Math.round(mix(a[1],
 function rgbCss(v){return `rgb(${v[0]},${v[1]},${v[2]})`}
 function tintColor(c,t){return rgbCss(mixRgb(rgbFromHex(c),[255,255,255],t))}
 function shadeColor(c,t){return rgbCss(mixRgb(rgbFromHex(c),[0,0,0],t))}
-// ── SPHERE — surface-density layer, not a second sphere ─────────────────────
-// Base: sphere[] surface particles
-// Added density: same surface, barely expanded so it reads as richer particles
+
 function drawSphere(opts={}){
   const now=performance.now();
   let{x:cx=W/2,y:cy=H/2,r=Math.min(W,H)*.22,alpha=1,color,speed=1,
@@ -402,22 +407,6 @@ function drawSphere(opts={}){
   const cy2=Math.cos(rotY),sy2=Math.sin(rotY);
   const cx2=Math.cos(rotX),sx2=Math.sin(rotX);
 
-  // 입자 하나를 3D→2D 투영하는 함수
-  function project(px,py,pz,radius){
-    let x=px*radius, y=py*radius, z=pz*radius;
-    if(blast!==undefined){
-      const t=ease(clamp(blast));
-      const far=Math.max(W,H)*(1.1+Math.abs(sphere[0]?.bx||.5)*.5);
-      // blast는 sphere 배열 원소에 bx/by 저장됨 — 인덱스 기반 처리는 아래에서
-    }
-    let x1=x*cy2-z*sy2, z1=x*sy2+z*cy2;
-    let y1=y*cx2-z1*sx2, z2=y*sx2+z1*cx2;
-    const dep=z2/(radius*1.2);
-    const pers=1/(1.85-dep*.42);
-    return{sx:cx+x1*pers*1.38, sy:cy+y1*pers*1.38, dep, pers};
-  }
-
-  // 입자색 결정
   function pickColor(px,py,pz,dep,special,specialColor){
     if(special) return specialColor;
     let col;
@@ -453,7 +442,6 @@ function drawSphere(opts={}){
     return col;
   }
 
-  // ── 외층 포인트 수집 ─────────────────────────────────────────────────────
   const outer=[];
   for(const p of sphere){
     let px=p.x, py=p.y, pz=p.z;
@@ -462,7 +450,6 @@ function drawSphere(opts={}){
       const t=ease(clamp(blast));
       const far=Math.max(W,H)*(1.1+Math.abs(p.bx)*.5);
       ox=mix(ox,p.bx*far,t); oy=mix(oy,p.by*far,t); oz=mix(oz,pz*r*3,t);
-      // 투영은 직접 계산
       let x1=ox*cy2-oz*sy2, z1=ox*sy2+oz*cy2;
       let y1=oy*cx2-z1*sx2, z2=oy*sx2+z1*cx2;
       const dep=z2/(r*1.2); const pers=1/(1.85-dep*.42);
@@ -510,7 +497,6 @@ function drawSphere(opts={}){
   ctx.save();
   ctx.globalAlpha=alpha;
 
-  // ── 외부 glow halo ──────────────────────────────────────────────────────
   const glowR=isGold?r*3.0:r*2.0;
   const grd=ctx.createRadialGradient(cx,cy,r*.05,cx,cy,glowR);
   if(isGold){
@@ -520,7 +506,7 @@ function drawSphere(opts={}){
     grd.addColorStop(.7,'rgba(247,200,95,.08)');
     grd.addColorStop(1,'rgba(247,200,95,0)');
   } else if(isRed){
-    grd.addColorStop(0,'rgba(220,18,28,.0)'); // 내부는 별도 core로
+    grd.addColorStop(0,'rgba(220,18,28,.0)');
     grd.addColorStop(.3,'rgba(180,12,20,.0)');
     grd.addColorStop(1,'rgba(160,8,16,0)');
   } else if(darkPct>0){
@@ -531,7 +517,6 @@ function drawSphere(opts={}){
     grd.addColorStop(.5,'rgba(120,12,24,.14)');
     grd.addColorStop(1,'rgba(120,12,24,0)');
   } else {
-    // 흰색 스피어
     grd.addColorStop(0,'rgba(210,225,255,.28)');
     grd.addColorStop(.45,'rgba(200,218,255,.10)');
     grd.addColorStop(1,'rgba(200,218,255,0)');
@@ -539,7 +524,6 @@ function drawSphere(opts={}){
   ctx.fillStyle=grd;
   ctx.beginPath();ctx.arc(cx,cy,glowR,0,7);ctx.fill();
 
-  // ── 내부 core glow ───────────────────────────────────────────────────────
   if(isGold){
     const core=ctx.createRadialGradient(cx,cy,0,cx,cy,r*.62);
     core.addColorStop(0,'rgba(255,254,230,.42)');
@@ -548,7 +532,6 @@ function drawSphere(opts={}){
     ctx.fillStyle=core;
     ctx.beginPath();ctx.arc(cx,cy,r*.62,0,7);ctx.fill();
   } else if(isRed){
-    // 빨간 스피어 내부 붉은 core glow
     const core=ctx.createRadialGradient(cx,cy,0,cx,cy,r*.75);
     core.addColorStop(0,`rgba(255,30,20,${.55*(1-whitePct)})`);
     core.addColorStop(.3,`rgba(220,15,18,${.32*(1-whitePct)})`);
@@ -556,7 +539,6 @@ function drawSphere(opts={}){
     core.addColorStop(1,'rgba(160,5,10,0)');
     ctx.fillStyle=core;
     ctx.beginPath();ctx.arc(cx,cy,r*.75,0,7);ctx.fill();
-    // 바깥 붉은 halo
     const halo=ctx.createRadialGradient(cx,cy,r*.5,cx,cy,r*2.2);
     halo.addColorStop(0,`rgba(200,12,18,${.22*(1-whitePct)})`);
     halo.addColorStop(.5,`rgba(160,8,14,${.08*(1-whitePct)})`);
@@ -571,14 +553,13 @@ function drawSphere(opts={}){
       ctx.beginPath();ctx.arc(cx,cy,r*.6,0,7);ctx.fill();
     }
   } else if(!isGold && darkPct===0){
-    // 흰 스피어 내부 soft core
     const core=ctx.createRadialGradient(cx,cy,0,cx,cy,r*.55);
     core.addColorStop(0,'rgba(230,238,255,.22)');
     core.addColorStop(1,'rgba(210,225,255,0)');
     ctx.fillStyle=core;
     ctx.beginPath();ctx.arc(cx,cy,r*.55,0,7);ctx.fill();
   }
-  // ── 표면 밀도 보강 레이어: 같은 겉면에 아주 얇게 입자만 추가 ─────────────
+
   for(const p of outer){
     if(p.special) continue;
     const a=clamp((p.dep+1)*.10+.035,.035,.22)*alpha;
@@ -588,7 +569,6 @@ function drawSphere(opts={}){
     ctx.beginPath();ctx.arc(sx,sy,Math.max(.55,p.s*.52),0,7);ctx.fill();
   }
 
-  // ── 외층 입자 ────────────────────────────────────────────────────────────
   for(const p of outer){
     const a=clamp((p.dep+1)*.40+.18,.1,1)*(isGold?1.14:1);
     ctx.fillStyle=rgba(p.col,a*alpha);
@@ -598,19 +578,16 @@ function drawSphere(opts={}){
   ctx.restore();
 }
 
-// ── CASTLE ─────────────────────────────────────────────────────────────────
 function drawCastle(prog){
   const t=ease(prog);
   const now=performance.now();
   ctx.save();
-  // 성 전체 glow 후광
   const cx=W/2, topY=castlePts.reduce((m,p)=>Math.min(m,p.y),H);
   const grd=ctx.createRadialGradient(cx,topY+60,0,cx,topY+60,Math.min(W,H)*.55);
   grd.addColorStop(0,`rgba(255,248,180,${.14*t})`);
   grd.addColorStop(.5,`rgba(247,200,95,${.06*t})`);
   grd.addColorStop(1,'rgba(247,200,95,0)');
   ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
-  // 입자 그리기
   for(const p of castlePts){
     const pulse=Math.sin(now*.0009+p.seed)*.5+.5;
     const goldK=pulse;
@@ -622,7 +599,6 @@ function drawCastle(prog){
   ctx.restore();
 }
 
-// ── WHITE CRACK TRANSITION ──────────────────────────────────────────────────
 function drawShatter(prog){
   const t=clamp(prog);
   const step=Math.min(8,Math.floor(t*8)+1);
@@ -719,7 +695,7 @@ function drawShatter(prog){
   ctx.fillRect(0,0,W,H);
   ctx.restore();
 }
-// ── DARK ALLEY ──────────────────────────────────────────────────────────────
+
 function drawAlley(prog, opts={}){
   const noTriangles=!!opts.noTriangles;
   const noWeather=!!opts.noWeather;
@@ -728,27 +704,22 @@ function drawAlley(prog, opts={}){
   const now=performance.now();
   ctx.save();
   ctx.globalAlpha=bgAlpha;
-  // Background
   const g=ctx.createLinearGradient(0,0,0,H);
   g.addColorStop(0,'#040406'); g.addColorStop(.5,'#0d0d0f'); g.addColorStop(1,'#0a0a0b');
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
   if(!noTriangles){
-    // Wall left
     ctx.fillStyle='#111013';
     ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(W*.42,0); ctx.lineTo(W*.33,H*.52); ctx.lineTo(0,H*.72); ctx.fill();
-    // Wall right
     ctx.fillStyle='#101012';
     ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(W*.58,0); ctx.lineTo(W*.67,H*.52); ctx.lineTo(W,H*.72); ctx.fill();
   }
 
-  // Glossy floor: reflective horizontal gradient
   const floor=ctx.createLinearGradient(0,H*.54,0,H);
   floor.addColorStop(0,'#1a1a1e'); floor.addColorStop(.3,'#141416'); floor.addColorStop(1,'#0a0a0c');
   ctx.fillStyle=floor;
   ctx.fillRect(0,H*.54,W,H-H*.54);
 
-  // Floor reflection sheen lines
   ctx.save(); ctx.globalAlpha=.12;
   for(let y=H*.56;y<H;y+=28){
     ctx.strokeStyle='rgba(255,255,255,.18)';
@@ -759,7 +730,6 @@ function drawAlley(prog, opts={}){
   ctx.restore();
 
   if(!noWeather){
-    // Rain
     const rainAlpha=clamp(prog*1.6,.0,1)*weatherAlpha;
     ctx.save(); ctx.globalAlpha=rainAlpha;
     ctx.strokeStyle='rgba(180,210,230,.32)'; ctx.lineWidth=.9;
@@ -770,7 +740,6 @@ function drawAlley(prog, opts={}){
     }
     ctx.restore();
 
-    // Lightning flash (screen-wide, no bolt shape): less frequent, longer, softer
     const flashWindow=2100;
     const flashIndex=Math.floor(now/flashWindow);
     const flashPhase=(now%flashWindow)/flashWindow;
@@ -782,7 +751,7 @@ function drawAlley(prog, opts={}){
     }
   }
 }
-// ── SUNSET ──────────────────────────────────────────────────────────────────
+
 function drawSunset(){
   const g=ctx.createLinearGradient(0,0,0,H);
   g.addColorStop(0,'#6b3e6e'); g.addColorStop(.34,'#d8854a'); g.addColorStop(.62,'#b86e3c'); g.addColorStop(1,'#5b321c');
@@ -808,7 +777,6 @@ function drawDust(){
   ctx.restore();
 }
 
-// ── CROSS (3D depth illusion via z-ordered particles) ────────────────────────
 function drawCross(closeup=0){
   ctx.save();
   for(const p of crossPts){
@@ -817,14 +785,12 @@ function drawCross(closeup=0){
     let y=mix(p.y, H*.5+(p.y-H*.52)*2.1, closeup)*persp+(1-persp)*H/2;
     const dep=clamp((p.z||0)/80+.5);
     const r=stableNoise(p.seed,1);
-    const col=r>.68?'rgba(80,48,24,':'r>.38'?'rgba(60,36,16,':'rgba(50,28,12,';
     ctx.fillStyle=`rgba(${r>.68?'80,48,24':r>.38?'60,36,16':'48,28,12'},${.32+.6*persp})`;
     ctx.beginPath(); ctx.arc(x,y,mix(1.2,2.6,closeup),0,7); ctx.fill();
   }
   ctx.restore();
 }
 
-// ── NAIL (elongated black particle cluster) ──────────────────────────────────
 function drawNail(prog){
   const cx=mix(W*.55,W*.52,prog), cy=mix(H*.52,H*.48,prog);
   const len=Math.min(W,H)*.35;
@@ -837,26 +803,22 @@ function drawNail(prog){
     ctx.fillStyle=`rgba(6,6,8,${.3+.65*u*(1-taper)})`;
     ctx.beginPath(); ctx.arc(x+stableNoise(i,52)*3-1.5,y,stableNoise(i,53)*1.8+.6,0,7); ctx.fill();
   }
-  // highlight shimmer
   ctx.globalAlpha=.06;
   ctx.fillStyle='rgba(255,255,255,1)';
   ctx.fillRect(-len*.45,-2,len*.65,3.5);
   ctx.restore();
 }
 
-// ── PROTOTYPE MODULE: HAND + NAIL ───────────────────────────────────────────────────
 function drawHandNail(prog){
   ctx.fillStyle='#020202'; ctx.fillRect(0,0,W,H);
   ctx.save(); ctx.translate(W*.52,H*.5); ctx.rotate(-.05);
   const hr=Math.min(W,H);
-  // palm silhouette (particle-based)
   for(let i=0;i<900;i++){
     const a=stableNoise(i,60)*Math.PI*2, rr=Math.sqrt(stableNoise(i,61));
     const x=Math.cos(a)*hr*.19*rr, y=Math.sin(a)*hr*.09*rr;
     ctx.fillStyle=`rgba(238,218,200,${.16+.56*(1-rr*.32)})`;
     ctx.beginPath(); ctx.arc(x,y,stableNoise(i,62)*2.2+.6,0,7); ctx.fill();
   }
-  // nail through palm
   for(let i=0;i<640;i++){
     const u=stableNoise(i,63);
     const x=(stableNoise(i,64)-.5)*32*(1-u*.55);
@@ -865,416 +827,12 @@ function drawHandNail(prog){
     ctx.beginPath(); ctx.arc(x,y,stableNoise(i,65)*2+.6,0,7); ctx.fill();
   }
   ctx.restore();
-  // impact flash
   if(prog<.25){
     ctx.fillStyle=`rgba(255,255,255,${.3*(1-prog*4)})`;
     ctx.fillRect(0,0,W,H);
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// PROTOTYPE VISUAL MODULES
-// ═══════════════════════════════════════════════════════════════════════════
-
-// ── PROTOTYPE: SUNSET HILL ─────────────────────────────────────────────────────
-// Warm dusk sky, silhouette hills made of particles, sphere floats up into view
-function drawPrototypeSunsetHill(prog){
-  const now=performance.now();
-  const p=ease(prog);
-
-  // Sky gradient – deep purple top → amber horizon → warm brown ground
-  const sky=ctx.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0,'#2a1535');
-  sky.addColorStop(.38,'#c46a28');
-  sky.addColorStop(.62,'#a85520');
-  sky.addColorStop(1,'#4a2810');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
-
-  // Far hill — particle layer 1 (lighter, behind)
-  const hill1Y=H*.68;
-  for(let i=0;i<1200;i++){
-    const nx=stableNoise(i,70);
-    const x=nx*W;
-    const wave=Math.sin(nx*Math.PI*3.2)*H*.07+Math.sin(nx*Math.PI*7.1)*H*.025;
-    const y=hill1Y+wave+stableNoise(i,71)*22;
-    if(y<hill1Y-H*.08) continue;
-    ctx.fillStyle=`rgba(90,52,22,${.28+stableNoise(i,72)*.38})`;
-    ctx.beginPath(); ctx.arc(x,y,1.6+stableNoise(i,73)*3.2,0,7); ctx.fill();
-  }
-
-  // Near hill — particle layer 2 (darker, front)
-  const hill2Y=H*.74;
-  for(let i=0;i<1600;i++){
-    const nx=stableNoise(i,74);
-    const x=nx*W;
-    const wave=Math.sin(nx*Math.PI*2.6)*H*.06+Math.sin(nx*Math.PI*5.8+1)*H*.022;
-    const y=hill2Y+wave+stableNoise(i,75)*18;
-    if(y<hill2Y-H*.07) continue;
-    ctx.fillStyle=`rgba(52,28,10,${.38+stableNoise(i,76)*.42})`;
-    ctx.beginPath(); ctx.arc(x,y,1.8+stableNoise(i,77)*3.6,0,7); ctx.fill();
-  }
-
-  // Sphere rises from below hills into frame
-  const sphereY=mix(H+80, H*.38, p);
-  // Some black corruption remains from chapter 5
-  drawSphere({x:W*.5,y:sphereY,r:Math.min(W,H)*.155,color:'#1a1a1a',speed:.6,alpha:.9,darkPct:.35});
-
-  // Warm atmospheric haze at horizon
-  const haze=ctx.createLinearGradient(0,H*.52,0,H*.78);
-  haze.addColorStop(0,'rgba(200,100,30,.0)');
-  haze.addColorStop(.5,'rgba(200,100,30,.06)');
-  haze.addColorStop(1,'rgba(200,100,30,.0)');
-  ctx.fillStyle=haze; ctx.fillRect(0,H*.52,W,H*.26);
-}
-
-// ── PROTOTYPE: CROSS APPEARS ───────────────────────────────────────────────────
-// Camera moves forward: hill particles rush toward viewer, cross materialises
-function drawPrototypeCrossApproach(prog){
-  const now=performance.now();
-  const p=ease(prog);
-
-  // Same sunset sky
-  const sky=ctx.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0,'#1e1028'); sky.addColorStop(.4,'#a85522'); sky.addColorStop(.65,'#8a4218'); sky.addColorStop(1,'#3c2008');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
-
-  // Hill particles "rushing" toward viewer as camera moves forward
-  for(let i=0;i<1800;i++){
-    const nx=stableNoise(i,80);
-    const baseY=H*.72+Math.sin(nx*Math.PI*2.8)*H*.06;
-    const rushScale=1+p*2.8;
-    const x=W/2+(nx*W-W/2)*rushScale;
-    const y=H*.5+(baseY-H*.5)*rushScale+stableNoise(i,81)*14;
-    if(y<H*.52||y>H*1.05) continue;
-    ctx.fillStyle=`rgba(42,22,8,${.32+stableNoise(i,82)*.4})`;
-    ctx.beginPath(); ctx.arc(x,y,1.4+stableNoise(i,83)*2.8*(1+p*.5),0,7); ctx.fill();
-  }
-
-  // Dust motes drifting
-  ctx.save(); ctx.globalAlpha=.45;
-  for(const d of dust){
-    d.y+=d.v*.7; d.x+=Math.sin(now*.0009+d.z)*1.6;
-    if(d.y>H) d.y=H*.4;
-    ctx.fillStyle=`rgba(160,100,50,${.12+d.z*.28})`;
-    ctx.beginPath(); ctx.arc(d.x,d.y,d.r*(1+d.z*.5),0,7); ctx.fill();
-  }
-  ctx.restore();
-
-  // Cross materialises from particles converging
-  const crossAlpha=clamp(p*1.6);
-  ctx.save(); ctx.globalAlpha=crossAlpha;
-  drawCross(clamp(p*.55));
-  ctx.restore();
-
-  // Sphere — small, dark, to the left of the cross
-  drawSphere({x:W*.28,y:H*.55,r:Math.min(W,H)*.09,color:'#141414',speed:.7,alpha:.88});
-}
-
-// ── PROTOTYPE: NAIL FORMS ───────────────────────────────────────────────────────
-// Dark sphere particles detach and elongate into a nail shape
-function drawPrototypeNailForms(prog){
-  const now=performance.now();
-  const p=ease(prog);
-
-  // Same sunset
-  const sky=ctx.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0,'#18091e'); sky.addColorStop(.42,'#8a4018'); sky.addColorStop(.68,'#6e3012'); sky.addColorStop(1,'#2e1806');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
-
-  // Cross in background, partially zoomed
-  drawCross(.38+p*.22);
-
-  // Sphere fades as its black particles leave
-  drawSphere({x:W*.3,y:H*.52,r:Math.min(W,H)*.09,color:'#111',speed:.5,alpha:clamp(1-p*1.2)});
-
-  // Black particles stream out of sphere region and assemble into nail
-  const nailCx=W*.56, nailCy=H*.5;
-  const nailLen=Math.min(W,H)*.36;
-  ctx.save();
-  for(let i=0;i<680;i++){
-    const t=stableNoise(i,90); // position along nail 0..1
-    // start: scattered around sphere origin
-    const sx=W*.3+(stableNoise(i,91)-.5)*Math.min(W,H)*.18;
-    const sy=H*.52+(stableNoise(i,92)-.5)*Math.min(W,H)*.18;
-    // end: tightly packed nail
-    const angle=-.18;
-    const ex=nailCx+Math.cos(angle)*(t-.5)*nailLen + Math.sin(angle)*(stableNoise(i,93)-.5)*(8+28*(1-t));
-    const ey=nailCy+Math.sin(angle)*(t-.5)*nailLen + Math.cos(angle)*(stableNoise(i,94)-.5)*(8+28*(1-t));
-    const px=mix(sx,ex,ease(p));
-    const py=mix(sy,ey,ease(p));
-    ctx.fillStyle=`rgba(6,6,8,${.28+.62*t})`;
-    ctx.beginPath(); ctx.arc(px,py,stableNoise(i,95)*1.8+.6,0,7); ctx.fill();
-  }
-  // Nail highlight
-  ctx.globalAlpha=.07*p;
-  ctx.fillStyle='rgba(255,255,255,1)';
-  ctx.save(); ctx.translate(nailCx,nailCy); ctx.rotate(-.18);
-  ctx.fillRect(-nailLen*.44,-1.5,nailLen*.62,3);
-  ctx.restore(); ctx.restore();
-}
-
-// ── PROTOTYPE: CROSS CLOSE-UP ───────────────────────────────────────────────────
-// Camera pushes right into the cross arm surface, showing wood grain depth
-function drawPrototypeCrossCloseup(prog){
-  const now=performance.now();
-  const p=ease(prog);
-
-  // BG dims toward black as we push in
-  const bgAlpha=mix(.55,.92,p);
-  const sky=ctx.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0,'#12071a'); sky.addColorStop(.5,'#5a2810'); sky.addColorStop(1,'#200e04');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
-  ctx.fillStyle=`rgba(0,0,0,${bgAlpha*.6})`; ctx.fillRect(0,0,W,H);
-
-  // Cross zoomed — closeup value ramps from .85 → 1.2 (exceeding the normal 0-1 gives bigger zoom)
-  const close=mix(.85,1.15,p);
-  // Manually draw zoomed cross with expanded perspective
-  ctx.save();
-  for(const q of crossPts){
-    const persp=1/(1+(q.z||0)*.0012-close*.22);
-    // Zoom pivot = center of cross arm (approximately W*.66, H*.38)
-    const pivX=W*.66, pivY=H*.38;
-    const zoomS=mix(1,2.8,p);
-    let x=(mix(q.x,W*.5+(q.x-W*.66)*2.4,close)-pivX)*zoomS*persp+pivX;
-    let y=(mix(q.y,H*.5+(q.y-H*.52)*2.0,close)-pivY)*zoomS*persp+pivY;
-    const k=stableNoise(q.seed,1);
-    ctx.fillStyle=`rgba(${k>.68?'78,46,20':k>.38?'58,34,14':'46,26,10'},${.3+.62*persp})`;
-    ctx.beginPath(); ctx.arc(x,y,mix(1.2,3.2,p),0,7); ctx.fill();
-  }
-  ctx.restore();
-
-  // Nail visible on the arm
-  ctx.save(); ctx.globalAlpha=clamp(p*1.4);
-  const nCx=W*.52, nCy=H*.5;
-  const nLen=Math.min(W,H)*.32;
-  ctx.translate(nCx,nCy); ctx.rotate(-.14);
-  for(let i=0;i<520;i++){
-    const t=stableNoise(i,96);
-    const x=(t-.5)*nLen;
-    const y=(stableNoise(i,97)-.5)*(10+32*(1-t));
-    ctx.fillStyle=`rgba(5,5,7,${.32+.6*t})`;
-    ctx.beginPath(); ctx.arc(x,y,stableNoise(i,98)*1.7+.5,0,7); ctx.fill();
-  }
-  ctx.restore();
-
-  // Tension vignette
-  const vig=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.2,W/2,H/2,Math.max(W,H)*.72);
-  vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(1,`rgba(0,0,0,${.5*p})`);
-  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
-}
-
-// ── PROTOTYPE: NAILING ────────────────────────────────────────────────────────
-// Particle hand, particle nail descends, impact shake + blackout
-function drawPrototypeNailing(prog){
-  const now=performance.now();
-  const p=ease(prog);
-
-  // Black BG
-  ctx.fillStyle='#020202'; ctx.fillRect(0,0,W,H);
-
-  // Palm — particle ellipse, warm skin tone
-  ctx.save(); ctx.translate(W*.5,H*.54); ctx.rotate(-.06);
-  for(let i=0;i<1100;i++){
-    const a=stableNoise(i,100)*Math.PI*2, rr=Math.sqrt(stableNoise(i,101));
-    const r=Math.min(W,H);
-    const x=Math.cos(a)*r*.22*rr, y=Math.sin(a)*r*.11*rr;
-    ctx.fillStyle=`rgba(235,215,196,${.14+.56*(1-rr*.28)})`;
-    ctx.beginPath(); ctx.arc(x,y,stableNoise(i,102)*2.4+.5,0,7); ctx.fill();
-  }
-  // Palm centre shadow
-  const palmShadow=ctx.createRadialGradient(0,0,0,0,0,Math.min(W,H)*.1);
-  palmShadow.addColorStop(0,'rgba(0,0,0,.45)'); palmShadow.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=palmShadow; ctx.beginPath(); ctx.arc(0,0,Math.min(W,H)*.18,0,7); ctx.fill();
-  ctx.restore();
-
-  // Nail descends and drives in
-  const nailProgress=clamp(p*1.8); // faster than chapter progress
-  const nCx=W*.5, nBaseY=H*.26;
-  const nLen=Math.min(W,H)*.38;
-  // Nail travels down and partially embeds
-  const nailY=mix(H*.08, H*.46, ease(nailProgress));
-  ctx.save(); ctx.translate(nCx,nailY); ctx.rotate(-.05);
-  for(let i=0;i<640;i++){
-    const t=stableNoise(i,103);
-    const x=(stableNoise(i,104)-.5)*(10+30*(1-t));
-    const y=mix(-nLen*.48,nLen*.48,t);
-    ctx.fillStyle=`rgba(6,6,8,${.3+.65*t})`;
-    ctx.beginPath(); ctx.arc(x,y,stableNoise(i,105)*2+.5,0,7); ctx.fill();
-  }
-  ctx.globalAlpha=.07;
-  ctx.fillStyle='rgba(255,255,255,1)';
-  ctx.fillRect(-3,-nLen*.44,5,nLen*.68);
-  ctx.restore();
-
-  // Impact flash when nail hits — screen shake implied by vignette pulse
-  if(nailProgress>.82){
-    const impPulse=Math.sin((nailProgress-.82)/.18*Math.PI);
-    ctx.fillStyle=`rgba(255,255,255,${.22*impPulse})`;
-    ctx.fillRect(0,0,W,H);
-    // Radial impact burst
-    ctx.save(); ctx.translate(W*.5,H*.5);
-    for(let i=0;i<200;i++){
-      const a=stableNoise(i,106)*Math.PI*2;
-      const dist=stableNoise(i,107)*Math.min(W,H)*.25*impPulse;
-      ctx.fillStyle=`rgba(255,255,255,${.18*impPulse*stableNoise(i,108)})`;
-      ctx.beginPath(); ctx.arc(Math.cos(a)*dist,Math.sin(a)*dist,1.5,0,7); ctx.fill();
-    }
-    ctx.restore();
-  }
-
-  // Initial flash
-  if(p<.18){
-    ctx.fillStyle=`rgba(255,255,255,${.32*(1-p/.18)})`;
-    ctx.fillRect(0,0,W,H);
-  }
-}
-
-// ── PROTOTYPE: BLOOD DROPLET TO RED SPHERE ─────────────────────────────────────
-// Droplet falls, wind particles rush UP past it (cinematic slow-motion feel)
-function drawPrototypeBloodDroplet(prog){
-  const now=performance.now();
-  const p=ease(prog);
-
-  // Black BG
-  ctx.fillStyle='#030204'; ctx.fillRect(0,0,W,H);
-
-  // Wind particles streaming UPWARD (strong, visible)
-  ctx.save();
-  for(const w of wind){
-    w.y-=w.v*1.6;
-    if(w.y<-30){w.y=H+30; w.x=rnd(W)}
-    const brightness=Math.sin(now*.001+w.x*.003)*.5+.5;
-    ctx.fillStyle=`rgba(${Math.round(mix(180,230,brightness))},${Math.round(mix(190,235,brightness))},${Math.round(mix(210,250,brightness))},${w.a*.9})`;
-    ctx.beginPath(); ctx.arc(w.x,w.y,w.r,0,7); ctx.fill();
-  }
-  ctx.restore();
-
-  // Droplet descends slowly
-  const dropletY=mix(H*.12,H*.52,p);
-  const dropletScale=mix(.28,1.05,p);
-
-  // Red atmospheric glow around droplet
-  const glowR=Math.min(W,H)*(.18+.28*p);
-  const grd=ctx.createRadialGradient(W/2,dropletY,0,W/2,dropletY,glowR);
-  grd.addColorStop(0,'rgba(180,15,30,.38)');
-  grd.addColorStop(.45,'rgba(140,8,20,.14)');
-  grd.addColorStop(1,'rgba(100,5,15,0)');
-  ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(W/2,dropletY,glowR,0,7); ctx.fill();
-
-  // Teardrop-shaped particle cluster
-  ctx.save(); ctx.translate(W/2,dropletY); ctx.scale(dropletScale,dropletScale);
-  for(let i=0;i<520;i++){
-    const a=i*2.399963+Math.sin(i)*.02;
-    const rr=Math.sqrt(i/520);
-    let px=Math.cos(a)*rr*34;
-    let py=Math.sin(a)*rr*40+8;
-    const tap=clamp((py+40)/90);
-    px*=mix(.28,1,Math.sin(tap*Math.PI));
-    py-=Math.pow(1-rr,1.9)*44;
-    const tw=Math.sin(now*.003+i)*1.4;
-    // Colour layers: bright crimson core → deep red edge
-    const cr=Math.round(mix(220,120,rr));
-    const cg=Math.round(mix(20,5,rr));
-    const cb=Math.round(mix(35,15,rr));
-    ctx.fillStyle=`rgba(${cr},${cg},${cb},${.26+.6*(1-rr*.42)})`;
-    ctx.beginPath(); ctx.arc(px+tw,py,1.1+1.9*(1-rr),0,7); ctx.fill();
-  }
-  ctx.restore();
-}
-
-// ── PROTOTYPE: WAITING FLOOR ───────────────────────────────────────────────────
-// Camera arrives first. Mirror floor, horizon line, sphere NOT yet visible.
-function drawPrototypeWaitingFloor(prog){
-  const now=performance.now();
-  const p=ease(prog);
-
-  // Deep black space
-  ctx.fillStyle='#020203'; ctx.fillRect(0,0,W,H);
-
-  // Horizon line
-  const baseHorizonY=H*.55;
-  const horizonDrop=ease(clamp((p-.78)/.22));
-  const horizY=mix(baseHorizonY,H+R*.12,horizonDrop);
-  const horizonFade=1-horizonDrop;
-  ctx.strokeStyle=`rgba(255,255,255,${.4+Math.sin(now*.0012)*.08})`; ctx.lineWidth=.8;
-  ctx.beginPath(); ctx.moveTo(0,horizY); ctx.lineTo(W,horizY); ctx.stroke();
-
-  // Mirror floor gradient (below horizon)
-  const floorGrd=ctx.createLinearGradient(0,horizY,0,H);
-  floorGrd.addColorStop(0,'rgba(255,255,255,.09)');
-  floorGrd.addColorStop(.3,'rgba(255,255,255,.03)');
-  floorGrd.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=floorGrd; ctx.fillRect(0,horizY,W,H-horizY);
-
-  // Glossy floor reflection lines (perspective lines converging to horizon)
-  ctx.save(); ctx.globalAlpha=.1;
-  for(let i=0;i<12;i++){
-    const x=W/2+(i-5.5)*W*.08;
-    ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=.6;
-    ctx.beginPath(); ctx.moveTo(x,horizY); ctx.lineTo(W/2+(x-W/2)*8,H); ctx.stroke();
-  }
-  ctx.restore();
-
-  // Faint red glow appearing at the top — hinting the droplet is coming
-  const hint=clamp(p*1.8-.2);
-  if(hint>0){
-    const hg=ctx.createRadialGradient(W/2,-20,0,W/2,-20,H*.45);
-    hg.addColorStop(0,`rgba(160,10,25,${.22*hint})`);
-    hg.addColorStop(1,'rgba(160,10,25,0)');
-    ctx.fillStyle=hg; ctx.fillRect(0,0,W,H*.5);
-  }
-
-  // Pulse effect — subtle brightness ripple on floor
-  const pulse=Math.sin(now*.0014)*.5+.5;
-  ctx.fillStyle=`rgba(255,255,255,${.025*pulse})`;
-  ctx.fillRect(0,horizY,W,H-horizY);
-}
-
-// ── WIND (upward streaming particles, used in sc11) ───────────────────────────
-// (wind array is already defined in makeWorld)
-
-// ── SOIL + GRASS BLOCK (Minecraft-style, all particles) ──────────────────────
-function drawParticleBlock(topY){
-  const left=W*.1, right=W*.9, width=right-left, blockH=H-topY;
-  ctx.save();
-  // Grass top — 7 rows of particles
-  const cols=Math.max(52,Math.floor(width/16));
-  const topRows=8;
-  for(let r=0;r<topRows;r++){
-    for(let c=0;c<cols;c++){
-      const i=r*cols+c;
-      const nx=(c+.5+stableNoise(i,1)*.42)/cols;
-      const x=left+nx*width;
-      const y=topY-38+r*5+stableNoise(i,2)*3;
-      const hue=stableNoise(i,3)>.48?'92,172,55':'68,140,43';
-      ctx.fillStyle=`rgba(${hue},${.58+stableNoise(i,4)*.3})`;
-      ctx.beginPath(); ctx.arc(x,y,2+stableNoise(i,5)*2.2,0,7); ctx.fill();
-    }
-  }
-  // Grass fringe
-  for(let i=0;i<260;i++){
-    const x=left+stableNoise(i,8)*width;
-    const y=topY-4+stableNoise(i,9)*16;
-    ctx.fillStyle=`rgba(68,136,44,${.24+stableNoise(i,10)*.4})`;
-    ctx.beginPath(); ctx.arc(x,y,1.2+stableNoise(i,11)*2.4,0,7); ctx.fill();
-  }
-  // Dirt — rows
-  const rows=Math.max(18,Math.floor(blockH/16));
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const i=12000+r*cols+c;
-      const x=left+(c+.5+stableNoise(i,1)*.5)/cols*width;
-      const y=topY+8+(r+.4+stableNoise(i,2)*.5)/rows*(H-topY-8);
-      const k=stableNoise(i,3);
-      const col=k>.72?'92,62,34':k>.38?'116,76,40':'68,44,26';
-      ctx.fillStyle=`rgba(${col},${.4+stableNoise(i,4)*.4})`;
-      ctx.beginPath(); ctx.arc(x,y,2+stableNoise(i,5)*2.8,0,7); ctx.fill();
-    }
-  }
-  ctx.restore();
-}
-
-// ── CHAPTER 7: SEED PLANTING ───────────────────────────────────────────────────
 function drawChapter7Seed(prog){
   const p=ease(prog);
   const R=Math.min(W,H);
@@ -1296,10 +854,9 @@ function drawChapter7Seed(prog){
   }
 
   drawSphere({x:W/2, y:H*.5, r:R*.19, color:'#f8fbff', speed:.55, alpha:1});
-
   drawBareSoilHill(topY,hillQ,false,0);
 }
-// ── CHAPTER 8: SPROUT GROWTH ───────────────────────────────────────────────────
+
 function drawChapter8Sprout(prog){
   const p=ease(prog);
   const greenQ=ease(clamp(p/.68));
@@ -1340,6 +897,7 @@ function drawChapter8Sprout(prog){
     drawParticleGrowth(topY,growQ,W/2,H*.5,r);
   }
 }
+
 function drawBareSoilHill(topY, rise=1, withGrass=false, grow=0){
   const left=W*.05, right=W*.95, width=right-left;
   ctx.save();
@@ -1507,14 +1065,13 @@ function drawParticleGrowth(topY,grow,originX=W/2,originY=H*.40,originR=Math.min
   }
   ctx.restore();
 }
+
 function drawFallingRedTrail(cx,cy,r,fall){
   ctx.save();
   const q=clamp(fall);
   const now=performance.now();
   ctx.globalCompositeOperation='lighter';
 
-  // Continuous particle wisps: roots follow a deeper sphere arc, then animated
-  // particles are emitted upward from those roots.
   const streams=32;
   const maxHeight=r*mix(.9,2.08,q);
   for(let s=0;s<streams;s++){
@@ -1567,27 +1124,21 @@ function drawFallingRedTrail(cx,cy,r,fall){
   }
   ctx.restore();
 }
-// ─── Timeline helpers ─────────────────────────────────────────────────────────
-// t01(chapterN): returns 0..1 progress within chapter N's segment
+
 function t01(n){
   const start=CK[n-1], end=CK[n];
   return clamp((S.T-start)/(end-start));
 }
-// tAbs(chapterN): absolute T at start of chapter N
 function tStart(n){return CK[n-1];}
 function tEnd(n){return CK[n];}
-// Is T currently inside chapter N's window?
 function inChapter(n){return S.T>=CK[n-1] && S.T<=CK[n]+.001;}
-// Crossfade weight between two chapters — how far we are past the chapter boundary
 function xfade(fromN,toN,dur=0.6){
   const boundary=CK[fromN];
   return ease(clamp((S.T-boundary)/dur));
 }
 
-// ─── GOSPEL SPHERE GALLERY ───────────────────────────────────────────────────
 function drawGallery(prog){
   const R=Math.min(W,H);
-  // Phase 1 (0→0.35): fade to black
   const blackAlpha=clamp(prog/0.35);
   ctx.save();ctx.globalAlpha=blackAlpha;ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);ctx.restore();
   const showProg=clamp((prog-.35)/.65);
@@ -1615,27 +1166,23 @@ function drawGallery(prog){
   }
 }
 
-// ─── MAIN RENDER LOOP ────────────────────────────────────────────────────────
 function render(){
   requestAnimationFrame(render);
   const now=performance.now();
-  const dt=Math.min((now-S.lastRealTime)/1000, .05); // cap at 50ms
+  const dt=Math.min((now-S.lastRealTime)/1000, .05);
   S.lastRealTime=now;
 
-  // Advance T toward Tgt
   const dist=S.Tgt-S.T;
   if(Math.abs(dist)>.001){
-    // 재생 속도: 기본 0.5배속, 멀수록 최대 1.6배속
     const speed=clamp(0.5+Math.abs(dist)*0.28,0.5,1.6);
     S.T+=Math.sign(dist)*Math.min(Math.abs(dist),dt*speed);
   } else {
-    S.T=S.Tgt; // snap when close
+    S.T=S.Tgt;
   }
 
   ctx.clearRect(0,0,W,H);
 
-  // 렘니스케이트(가로 8자) 오프셋 계산 — 매 프레임 갱신
-  const _lt=performance.now()*.00038; // ~16.5초 주기
+  const _lt=performance.now()*.00038;
   const _ld=1+Math.sin(_lt)*Math.sin(_lt);
   S.lemOff={bx:Math.cos(_lt)/_ld, by:Math.sin(_lt)*Math.cos(_lt)/_ld*.45};
 
@@ -1645,37 +1192,25 @@ function render(){
 
   const T=S.T;
 
-  // ── Helper: draw the universal background for a given T ──────────────────
-  // Each segment blends naturally into the next
-
-  // ── SEGMENT 1: Black cosmos (T 0..4) ────────────────────────────────────
   if(T<=CK[1]){
     const p=t01(1);
     ctx.fillStyle='#030407'; ctx.fillRect(0,0,W,H);
     drawStars(.55+.18*Math.sin(now*.0004));
     drawSphere({speed:.7,color:'#f8fbff'});
   }
-
-  // ── SEGMENT 2: Spin → Blast (T CK[1]..CK[2]) ────────────────────────────
   else if(T<=CK[2]){
     const p=t01(2);
     ctx.fillStyle='#030407'; ctx.fillRect(0,0,W,H);
     drawStars(clamp(1-p*1.4));
     if(p<.72){
-      // 초반엔 느리게, 0.72 직전에 폭발적으로 빨라짐
       const spinP=p/.72;
-      const speed=mix(0.6, 22, ease3(spinP)); // ease3 = quintic, 끝에 집중
+      const speed=mix(0.6, 22, ease3(spinP));
       drawSphere({speed, color:'#f8fbff'});
     } else {
-      // Blast 0.72→1.0
       const blast=ease((p-.72)/.28);
       drawSphere({speed:24,color:'#f8fbff',alpha:clamp(1-blast*.6),blast});
     }
   }
-
-  // ── SEGMENT 3: Converge → Gold → White void (T CK[2]..CK[3]) ───────────
-  // p 0.00–0.20 : 퍼진 입자들이 다시 모여 금색 스피어로 수렴
-  // p 0.20–1.00 : 흰 배경 fade-in, 금색 스피어가 중앙에 안착
   else if(T<=CK[3]){
     const p=t01(3);
     const R=Math.min(W,H);
@@ -1683,7 +1218,6 @@ function render(){
     const holdEnd=gatherEnd+(1.6/CK_DUR[3]);
     const expandEnd=holdEnd+(1.1/CK_DUR[3]);
     if(p<expandEnd){
-      // 흩어진 입자가 작은 스피어로 모인 뒤, 천천히 금색 스피어로 안정화
       ctx.fillStyle='#030407'; ctx.fillRect(0,0,W,H);
       const expandQ=clamp((p-holdEnd)/(expandEnd-holdEnd));
       const gatherQ=p<gatherEnd ? clamp(p/gatherEnd) : 1;
@@ -1692,24 +1226,17 @@ function render(){
       drawSphere({speed:mix(10,1.2,q),pointGather:gatherQ,pointExpand:expandQ,
         color:'#f7c85f',goldBoost:true,r:R*.24,alpha:.58+.42*q});
     } else {
-      // 흰 무한 공간 fade-in → 장면 4 시작색 #f7fbff(247,251,255)에 맞춤
       const q=ease((p-expandEnd)/(1-expandEnd));
       ctx.fillStyle=`rgb(${Math.round(mix(3,247,q))},${Math.round(mix(3,251,q))},${Math.round(mix(7,255,q))})`;
       ctx.fillRect(0,0,W,H);
       drawSphere({speed:1.1,color:'#f7c85f',goldBoost:true,r:R*.24,alpha:1});
     }
   }
-
-  // ── SEGMENT 4: 추락 (T CK[3]..CK[4]) ────────────────────────────────────
-  // Chapter 3 흰 공간에서 바로 이어짐
-  // p 0.00–0.20 : 흰 배경 균열 → 검은 배경 (금색 스피어 중앙)
-  // p 0.20–1.00 : 검은 골목 + 비 + 스피어 금→검 변화
   else if(T<=CK[4]){
     const p=t01(4);
     const R=Math.min(W,H);
 
     if(p<.085){
-      // 흰 세계 균열 — 1.1초 지속
       const stage=clamp(p/.085);
       const crackEnd=1-(0.6/(CK_DUR[4]*.085));
       const holdEnd=crackEnd+(0.3/(CK_DUR[4]*.085));
@@ -1725,14 +1252,11 @@ function render(){
       drawShatter(crackQ);
       drawSphere({x:W/2,y:H*.5,r:R*.24,color:'#f7c85f',goldBoost:crackQ<.4,speed:.8,alpha:1});
       ctx.restore();
-
     } else {
-      // 검은 골목 + 비 + 스피어 금→검
       const q=ease((p-.085)/.915);
       drawAlley(q,{noTriangles:true});
       const darkPct=ease(clamp(q*1.3));
 
-      // 흰색 후광을 스피어보다 먼저(뒤에) 그림
       if(darkPct>.5){
         const t=ease((darkPct-.5)/.5);
         const haloR=R*.22*2.35;
@@ -1748,17 +1272,11 @@ function render(){
         ctx.restore();
       }
 
-      // 스피어는 후광 위에
       drawSphere({x:W*.5,y:H*.5,r:R*.22,
         color:'#f7c85f',darkPct,
         speed:mix(.8,1.8,q),alpha:1});
     }
   }
-
-  // ── SEGMENT 5: 검은→빨강 그라데이션 변화 (T CK[4]..CK[5]) ──────────────
-  // 낙하 없음. 스피어가 오른쪽 아래부터 검정→빨강으로 서서히 물듦
-  // p 0.00–0.55 : 오른쪽 아래부터 빨간 입자 번짐
-  // p 0.55–1.00 : 완전 빨간 스피어 + 꼬리 + 흰 입자 상승
   else if(T<=CK[5]){
     const p=t01(5);
     const R=Math.min(W,H);
@@ -1817,9 +1335,6 @@ function render(){
       ctx.restore();
     }
   }
-
-  // ── SEGMENT 6: New Beginning (T CK[5]..CK[6]) ───────────────────────────
-  // Chapter 5 끝 화면에서 시작해 꼬리 fade out → 입자별 흰색 전환 → 중심 안착
   else if(T<=CK[6]){
     const p=t01(6);
     const R=Math.min(W,H);
@@ -1863,24 +1378,18 @@ function render(){
     }
     ctx.restore();
   }
-
-  // ── SEGMENT 7: Seed (T CK[6]..CK[7]) ────────────────────────────────────
   else if(T<=CK[7]){
     drawChapter7Seed(t01(7));
   }
-
-  // ── SEGMENT 8: Sprout (T CK[7]..CK[8]) ──────────────────────────────────
   else {
     drawChapter8Sprout(t01(8));
   }
 
-  // Gallery overlay (runs on top of any scene)
   if(S.gallery) S.galleryProg=Math.min(1,S.galleryProg+dt*.85);
   else S.galleryProg=Math.max(0,S.galleryProg-dt*1.8);
   if(S.galleryProg>0) drawGallery(S.galleryProg);
 }
 
-// ─── Labels ──────────────────────────────────────────────────────────────────
 function setLabels(){
   const[t]=CHAPTER_INFO[S.chapter-1];
   $('#chapterSmall').textContent=`Chapter ${String(S.chapter).padStart(2,'0')}`;
@@ -1889,18 +1398,23 @@ function setLabels(){
   $('#presentationTotal').textContent=TOTAL;
 }
 
-// ─── Visitor particle ─────────────────────────────────────────────────────────
 function addVisitorParticle(color){
   const idx=Math.floor(Math.random()*sphere.length);
   sphere[idx].special=true; sphere[idx].color=color||S.remoteColor;
   S.particles.push({color:color||S.remoteColor,at:Date.now()});
 }
 
-// ─── Firebase / room ─────────────────────────────────────────────────────────
+// ——— Room / Firebase helpers ———————————————————————————————————————————————
 const colors=['#f7c85f','#111111','#bf1830','#f8fbff','#4fd46f','#7dd3fc','#c084fc','#fb923c'];
+
+// Deterministic room ID from 4-digit code (e.g. "1234" → "1234")
+function codeToRoomId(code){
+  const n=Math.max(0,Math.min(9999,parseInt(String(code).replace(/\D/g,''))||0));
+  return String(n).padStart(4,'0');
+}
+
 function sanitize(v){return String(v||'').replace(/[^A-Z0-9]/gi,'').toUpperCase().slice(0,12)}
 function roomRef(id){return ref(S.db,`rooms/${id}`)}
-function newRoomId(){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:6},()=>a[Math.floor(Math.random()*a.length)]).join('')}
 function show(m){$('#notice').textContent=m}
 function clear(){$('#notice').textContent=''}
 function switchScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(n+'Screen').classList.add('active');S.mode=n}
@@ -1913,9 +1427,7 @@ function applyChapter(v){
   const wasChapter=S.chapter;
   S.prevChapter=wasChapter;
   S.chapter=n;
-  // Target = end of chapter N's checkpoint (fully settled state)
   S.Tgt=CK[n];
-  // Backward: snap T immediately so we don't animate in reverse
   if(n<wasChapter) S.T=CK[n];
   setLabels();
 }
@@ -2020,14 +1532,65 @@ function listen(id){
 async function write(patch){
   if(!S.ready||!S.roomId){show('Firebase connection required.');return}
   const base={scene:S.chapter,blackScreen:S.black,immersive:S.immersive,gallery:S.gallery,music:S.music,musicVolume:S.musicVolume,updatedAt:Date.now()};
-  // phoneOffset이 있으면 매 write마다 보존 (다른 이벤트로 덮어씌워지지 않도록)
   if(S.phoneOffset.x||S.phoneOffset.y) base.phoneOrient={ox:S.phoneOffset.x,oy:S.phoneOffset.y};
   await set(roomRef(S.roomId),{...base,...patch}).catch(e=>show('Save failed: '+e.message));
 }
 
-async function startPresentation(){
+// ——— Code modal logic ———————————————————————————————————————————————————————
+const DIGIT_IDS=['cd0','cd1','cd2','cd3'];
+
+DIGIT_IDS.forEach((id,i)=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',e=>{
+    // Keep only last digit entered
+    const v=e.target.value.replace(/\D/g,'');
+    e.target.value=v?v[v.length-1]:'';
+    if(v && i<3) document.getElementById(DIGIT_IDS[i+1]).focus();
+  });
+  el.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!e.target.value&&i>0){
+      document.getElementById(DIGIT_IDS[i-1]).focus();
+    }
+    if(e.key==='Enter') document.getElementById('confirmModal').click();
+  });
+  // Allow paste of 4-digit code on any field
+  el.addEventListener('paste',e=>{
+    e.preventDefault();
+    const text=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+    DIGIT_IDS.forEach((did,di)=>{
+      document.getElementById(did).value=text[di]||'';
+    });
+    document.getElementById(DIGIT_IDS[Math.min(3,text.length-1)||0]).focus();
+  });
+});
+
+$('#startPresentation').onclick=()=>{
+  // Clear previous values
+  DIGIT_IDS.forEach(id=>{document.getElementById(id).value=''});
+  document.getElementById('codeModal').classList.add('active');
+  document.getElementById('cd0').focus();
+};
+
+$('#cancelModal').onclick=()=>{
+  document.getElementById('codeModal').classList.remove('active');
+};
+
+$('#confirmModal').onclick=async()=>{
+  const code=DIGIT_IDS.map(id=>document.getElementById(id).value||'0').join('');
+  const roomId=codeToRoomId(code);
+  document.getElementById('codeModal').classList.remove('active');
+  await startPresentation(roomId);
+};
+
+// Close modal on backdrop click
+document.getElementById('codeModal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget) document.getElementById('codeModal').classList.remove('active');
+});
+
+// ——— Presentation start ——————————————————————————————————————————————————————
+async function startPresentation(roomId){
   switchScreen('presentation');
-  S.roomId=newRoomId();
+  S.roomId=roomId;
   S.T=0; S.Tgt=0; S.chapter=1; S.lastRealTime=performance.now();
   applyBlack(false);applyImmersive(false);applyGallery(false);applyMusicVolume(.72);applyMusic(false);primeBgm();
   setLabels();
@@ -2037,22 +1600,30 @@ async function startPresentation(){
   renderQr(url);
   history.replaceState({},'',`${location.pathname}?mode=presentation&room=${S.roomId}`);
   S.phoneOffset={x:0,y:0};S.phoneOffsetTarget={x:0,y:0};
-  if(S.ready){await write({scene:1,blackScreen:false,immersive:false,music:false,musicVolume:S.musicVolume,phoneOrient:null});listen(S.roomId)}
+  if(S.ready){
+    // Only initialise if room is empty — subsequent screens join without resetting chapter
+    const snap=await get(roomRef(roomId)).catch(()=>null);
+    if(!snap||!snap.val()){
+      await write({scene:1,blackScreen:false,immersive:false,music:false,musicVolume:S.musicVolume,phoneOrient:null});
+    }
+    listen(S.roomId);
+  }
 }
+
 function startRemote(id=''){
   switchScreen('remote');
   const rid=sanitize(id);
   S.roomId=rid;
-  $('#remoteRoom').textContent=rid||'------';
+  $('#remoteRoom').textContent=rid||'----';
   $('#manualRoomCard').style.display=rid?'none':'block';
   if(rid){history.replaceState({},'',`${location.pathname}?mode=remote&room=${rid}`);listen(rid)}
-  else show('Scan the QR code on the presentation screen or enter a Room ID.');
+  else show('QR코드를 스캔하거나 4자리 코드를 입력하세요.');
 }
 function goHome(){const audio=$('#bgmAudio');if(audio){audio.pause();audio.currentTime=0;audio.muted=true}stopListen();switchScreen('home');history.replaceState({},'',location.pathname);clear()}
 function newColor(){S.remoteColor=colors[Math.floor(Math.random()*colors.length)];const orb=$('#remoteOrb');if(orb)orb.style.setProperty('--orb',S.remoteColor)}
 async function sendGo(){const ev={color:S.remoteColor,at:Date.now()};addVisitorParticle(ev.color);newColor();if(S.ready&&S.roomId)await write({lastParticle:ev})}
 
-// ─── Phone orientation tracking (remote only) ────────────────────────────────
+// ——— Phone orientation ———————————————————————————————————————————————————————
 let _orientRef=null,_lastOrient={beta:0,gamma:0},_orientTimer=null;
 
 window.addEventListener('deviceorientation',e=>{
@@ -2089,8 +1660,7 @@ async function calibratePhone(){
   show('Position set! Move the phone to guide the sphere.');
 }
 
-// ─── Event listeners ─────────────────────────────────────────────────────────
-$('#startPresentation').onclick=startPresentation;
+// ——— Event listeners ————————————————————————————————————————————————————————
 $('#startRemote').onclick=()=>startRemote('');
 $('#homeFromPresentation').onclick=goHome;
 $('#homeFromRemote').onclick=goHome;
@@ -2128,11 +1698,11 @@ document.addEventListener('fullscreenchange',()=>{
   }
 });
 
-// ─── Boot ────────────────────────────────────────────────────────────────────
+// ——— Boot ————————————————————————————————————————————————————————————————————
 boot(); resize(); setLabels(); newColor(); render();
 const params=new URLSearchParams(location.search);
 const pmode=params.get('mode'), proom=sanitize(params.get('room'));
-if(pmode==='remote')startRemote(proom);
+if(pmode==='remote') startRemote(proom);
 else if(pmode==='presentation'&&proom){
   switchScreen('presentation');S.roomId=proom;
   $('#presentationRoom').textContent=proom;
