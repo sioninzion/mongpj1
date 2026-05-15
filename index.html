@@ -215,10 +215,9 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
     <div class="remote-controls">
       <button class="rbtn" id="previousChapter" aria-label="Previous chapter" title="Previous chapter">&#9664;</button>
       <button class="rbtn" id="nextChapter" aria-label="Next chapter" title="Next chapter">&#9654;</button>
-      <button class="rbtn" id="toggleFullscreen" aria-label="Toggle fullscreen" title="Toggle fullscreen">&#9654;</button>
       <button class="rbtn" id="toggleMusic" aria-label="Toggle music" title="Toggle music">&#9836;</button>
+      <button class="rbtn" id="reduceMusic" aria-label="Reduce music to 40% of current volume" title="Reduce music to 40% of current volume">40%</button>
       <button class="rbtn" id="sphereGallery" aria-label="Gospel spheres" title="Gospel spheres">&#9678;</button>
-      <button class="rbtn" id="calibrateBtn" aria-label="Set position" title="Set position">&#128247;</button>
     </div>
     <div class="card" id="manualRoomCard">
       <span class="meta">4자리 코드로 연결</span>
@@ -236,7 +235,7 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import{getDatabase,ref,set,onValue,get}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+import{getDatabase,ref,set,onValue,get,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
 const firebaseConfig={apiKey:"AIzaSyChDJWmEsddYz178QLa6VCF5Xq9gS3uRAs",authDomain:"mongpj1.firebaseapp.com",databaseURL:"https://mongpj1-default-rtdb.firebaseio.com",projectId:"mongpj1",storageBucket:"mongpj1.firebasestorage.app",messagingSenderId:"525975516949",appId:"1:525975516949:web:babf2d21760764db219b1c"};
 
@@ -258,8 +257,9 @@ let W=innerWidth, H=innerHeight, DPR=1;
 
 const S={mode:'home',roomId:'',chapter:1,prevChapter:1,
   T:0,Tgt:0,Tspeed:1,lastRealTime:performance.now(),
-  black:false,immersive:false,gallery:false,music:false,musicVolume:.72,musicFade:null,galleryProg:0,db:null,ready:false,unsub:null,remoteColor:'#ffd166',particles:[],
-  lemOff:{bx:0,by:0},phoneOffset:{x:0,y:0},phoneOffsetTarget:{x:0,y:0}};
+  black:false,immersive:false,gallery:false,music:false,musicVolume:.72,musicFade:null,musicStartAt:0,musicSyncedStartAt:0,
+  galleryProg:0,db:null,ready:false,unsub:null,clockOffset:0,remoteColor:'#ffd166',particles:[],
+  lemOff:{bx:0,by:0}};
 
 const CK_DUR=[
   0,
@@ -388,12 +388,6 @@ function drawSphere(opts={}){
     cx += S.lemOff.bx * r * 0.028;
     cy += S.lemOff.by * r * 0.028;
   }
-  if((S.chapter===1||S.chapter===8||S.gallery) && S.lemOff){
-    const _pct=S.chapter===1?0.40:S.gallery?0.12:0.15;
-    cx += clamp(S.phoneOffset.x,-1,1) * r * _pct;
-    cy += clamp(S.phoneOffset.y,-1,1) * r * _pct;
-  }
-
   const isGold=(goldBoost||(color==='#f7c85f')) && darkPct===0;
   const isRed=redPct>=1 && darkPct>0;
   const isGreen=(color==='#4fd46f' || greenPct>0) && darkPct===0;
@@ -1186,10 +1180,6 @@ function render(){
   const _ld=1+Math.sin(_lt)*Math.sin(_lt);
   S.lemOff={bx:Math.cos(_lt)/_ld, by:Math.sin(_lt)*Math.cos(_lt)/_ld*.45};
 
-  const _lk=S.chapter===1?0.042:0.06;
-  S.phoneOffset.x+=(S.phoneOffsetTarget.x-S.phoneOffset.x)*_lk;
-  S.phoneOffset.y+=(S.phoneOffsetTarget.y-S.phoneOffset.y)*_lk;
-
   const T=S.T;
 
   if(T<=CK[1]){
@@ -1433,24 +1423,40 @@ function applyChapter(v){
 }
 function applyBlack(v){S.black=!!v;$('#blackout').classList.toggle('active',S.black)}
 function applyImmersive(v){
-  const changed=S.immersive!==!!v;
   S.immersive=!!v;
   $('#presentationScreen').classList.toggle('immersive',S.immersive);
-  const btn=$('#toggleFullscreen');if(btn)btn.classList.toggle('active',S.immersive);
-  if(S.mode==='presentation'&&changed){
-    if(v&&!document.fullscreenElement&&document.documentElement.requestFullscreen)
-      document.documentElement.requestFullscreen().catch(()=>{});
-    else if(!v&&document.fullscreenElement&&document.exitFullscreen)
-      document.exitFullscreen().catch(()=>{});
-  }
+  const btn=$('#fullScreenButton');if(btn)btn.classList.toggle('active',S.immersive);
 }
 function applyGallery(v){S.gallery=!!v;const btn=$('#sphereGallery');if(btn)btn.classList.toggle('active',S.gallery)}
 function primeBgm(){
   const audio=$('#bgmAudio');
   if(!audio||S.mode!=='presentation')return;
+  if(S.musicFade) cancelAnimationFrame(S.musicFade);
+  S.musicFade=null;
+  S.musicSyncedStartAt=0;
+  audio.pause();
   audio.muted=true;
   audio.volume=0;
-  audio.play().catch(()=>{});
+  try{audio.currentTime=0}catch(e){}
+}
+function serverNow(){return Date.now()+(S.clockOffset||0)}
+function musicTimeFromStart(audio,startAt){
+  const elapsed=Math.max(0,(serverNow()-(Number(startAt)||0))/1000);
+  return Number.isFinite(audio.duration)&&audio.duration>0 ? elapsed%audio.duration : elapsed;
+}
+function syncBgmToStart(audio,startAt,force=false){
+  const start=Number(startAt)||0;
+  if(!start)return;
+  const target=musicTimeFromStart(audio,start);
+  const drift=Math.abs((audio.currentTime||0)-target);
+  if(force||audio.paused||S.musicSyncedStartAt!==start||drift>1.25){
+    try{audio.currentTime=target;S.musicSyncedStartAt=start}
+    catch(e){
+      audio.addEventListener('loadedmetadata',()=>{
+        try{audio.currentTime=musicTimeFromStart(audio,start);S.musicSyncedStartAt=start}catch(err){}
+      },{once:true});
+    }
+  }
 }
 function applyMusicVolume(v){
   const n=Number.isFinite(+v)?clamp(+v,0,1):.72;
@@ -1479,15 +1485,20 @@ function fadeBgm(audio,target){
   }
   S.musicFade=requestAnimationFrame(step);
 }
-function applyMusic(v){
+function applyMusic(v,startAt=S.musicStartAt){
+  const start=Number(startAt)||0;
+  S.musicStartAt=start;
+  if(!start)S.musicSyncedStartAt=0;
+  const wasMusic=S.music;
   S.music=!!v;
   const btn=$('#toggleMusic');if(btn)btn.classList.toggle('active',S.music);
   const topBtn=$('#musicButton');if(topBtn)topBtn.classList.toggle('active',S.music);
   const audio=$('#bgmAudio');
   if(!audio||S.mode!=='presentation')return;
   if(S.music){
+    syncBgmToStart(audio,S.musicStartAt,!wasMusic);
     audio.muted=false;
-    if(audio.paused) audio.play().then(()=>fadeBgm(audio,S.musicVolume)).catch(()=>show('Music is ready. Tap the music button once on the presentation screen.'));
+    if(audio.paused) audio.play().then(()=>{syncBgmToStart(audio,S.musicStartAt,!wasMusic);fadeBgm(audio,S.musicVolume)}).catch(()=>show('Music is ready. Tap the music button once on the presentation screen.'));
     else fadeBgm(audio,S.musicVolume);
   }else{
     if(audio.paused||audio.muted){audio.volume=0;audio.muted=true;return}
@@ -1499,18 +1510,22 @@ async function enterPresentationFullscreen(){
   if(document.documentElement.requestFullscreen && !document.fullscreenElement){
     await document.documentElement.requestFullscreen().catch(()=>{});
   }
-  if(S.ready&&S.roomId) write({immersive:true});
 }
 async function exitPresentationFullscreen(){
   if(document.fullscreenElement && document.exitFullscreen){
     await document.exitFullscreen().catch(()=>{});
   }
   applyImmersive(false);
-  if(S.ready&&S.roomId) write({immersive:false});
 }
 function connected(v){$('#connectionDot').classList.toggle('on',v);$('#connectionText').textContent=v?'Connected':'Waiting'}
 
-function boot(){try{S.db=getDatabase(initializeApp(firebaseConfig));S.ready=true}catch(e){show('Firebase init failed: '+e.message)}}
+function boot(){
+  try{
+    S.db=getDatabase(initializeApp(firebaseConfig));
+    S.ready=true;
+    onValue(ref(S.db,'.info/serverTimeOffset'),snap=>{S.clockOffset=snap.val()||0});
+  }catch(e){show('Firebase init failed: '+e.message)}
+}
 function stopListen(){if(typeof S.unsub==='function')S.unsub();S.unsub=null;connected(false)}
 function listen(id){
   if(!S.ready||!id)return;
@@ -1519,20 +1534,17 @@ function listen(id){
     const d=snap.val()||{};
     applyChapter(d.scene||1);
     applyBlack(d.blackScreen||false);
-    applyImmersive(d.immersive||false);
     applyGallery(d.gallery||false);
     applyMusicVolume(d.musicVolume ?? S.musicVolume);
-    applyMusic(d.music||false);
+    applyMusic(d.music||false,d.musicStartAt||0);
     if(d.lastParticle?.at&&!S.particles.find(x=>x.at===d.lastParticle.at))
       addVisitorParticle(d.lastParticle.color);
-    if(d.phoneOrient!=null) S.phoneOffsetTarget={x:d.phoneOrient.ox||0,y:d.phoneOrient.oy||0};
     connected(true);clear();
   },e=>{connected(false);show('Firebase read error: '+e.message)});
 }
 async function write(patch){
   if(!S.ready||!S.roomId){show('Firebase connection required.');return}
-  const base={scene:S.chapter,blackScreen:S.black,immersive:S.immersive,gallery:S.gallery,music:S.music,musicVolume:S.musicVolume,updatedAt:Date.now()};
-  if(S.phoneOffset.x||S.phoneOffset.y) base.phoneOrient={ox:S.phoneOffset.x,oy:S.phoneOffset.y};
+  const base={scene:S.chapter,blackScreen:S.black,gallery:S.gallery,music:S.music,musicVolume:S.musicVolume,musicStartAt:S.musicStartAt||0,updatedAt:Date.now()};
   await set(roomRef(S.roomId),{...base,...patch}).catch(e=>show('Save failed: '+e.message));
 }
 
@@ -1592,6 +1604,7 @@ async function startPresentation(roomId){
   switchScreen('presentation');
   S.roomId=roomId;
   S.T=0; S.Tgt=0; S.chapter=1; S.lastRealTime=performance.now();
+  S.musicStartAt=0;
   applyBlack(false);applyImmersive(false);applyGallery(false);applyMusicVolume(.72);applyMusic(false);primeBgm();
   setLabels();
   $('#presentationRoom').textContent=S.roomId;
@@ -1599,12 +1612,11 @@ async function startPresentation(roomId){
   $('#remoteLink').textContent=url;
   renderQr(url);
   history.replaceState({},'',`${location.pathname}?mode=presentation&room=${S.roomId}`);
-  S.phoneOffset={x:0,y:0};S.phoneOffsetTarget={x:0,y:0};
   if(S.ready){
     // Only initialise if room is empty — subsequent screens join without resetting chapter
     const snap=await get(roomRef(roomId)).catch(()=>null);
     if(!snap||!snap.val()){
-      await write({scene:1,blackScreen:false,immersive:false,music:false,musicVolume:S.musicVolume,phoneOrient:null});
+      await write({scene:1,blackScreen:false,music:false,musicVolume:S.musicVolume,musicStartAt:0});
     }
     listen(S.roomId);
   }
@@ -1614,6 +1626,7 @@ function startRemote(id=''){
   switchScreen('remote');
   const rid=sanitize(id);
   S.roomId=rid;
+  S.musicStartAt=0;
   $('#remoteRoom').textContent=rid||'----';
   $('#manualRoomCard').style.display=rid?'none':'block';
   if(rid){history.replaceState({},'',`${location.pathname}?mode=remote&room=${rid}`);listen(rid)}
@@ -1621,43 +1634,20 @@ function startRemote(id=''){
 }
 function goHome(){const audio=$('#bgmAudio');if(audio){audio.pause();audio.currentTime=0;audio.muted=true}stopListen();switchScreen('home');history.replaceState({},'',location.pathname);clear()}
 function newColor(){S.remoteColor=colors[Math.floor(Math.random()*colors.length)];const orb=$('#remoteOrb');if(orb)orb.style.setProperty('--orb',S.remoteColor)}
-async function sendGo(){const ev={color:S.remoteColor,at:Date.now()};addVisitorParticle(ev.color);newColor();if(S.ready&&S.roomId)await write({lastParticle:ev})}
-
-// ——— Phone orientation ———————————————————————————————————————————————————————
-let _orientRef=null,_lastOrient={beta:0,gamma:0},_orientTimer=null;
-
-window.addEventListener('deviceorientation',e=>{
-  if(e.beta==null) return;
-  _lastOrient={beta:e.beta,gamma:e.gamma};
-  if(!_orientRef) return;
-  S.phoneOffset={
-    x:clamp((_lastOrient.gamma-_orientRef.gamma)/30,-1,1),
-    y:clamp((_lastOrient.beta -_orientRef.beta )/30,-1,1)
-  };
-});
-
-async function calibratePhone(){
-  if(typeof DeviceOrientationEvent!=='undefined' &&
-     typeof DeviceOrientationEvent.requestPermission==='function'){
-    try{
-      const p=await DeviceOrientationEvent.requestPermission();
-      if(p!=='granted'){show('Orientation permission required.');return;}
-    }catch(e){show('Permission request failed: '+e.message);return;}
+function startMusicPatch(patch){
+  const next={...patch};
+  if(!S.musicStartAt && next.music!==false){
+    next.music=true;
+    next.musicStartAt=serverTimestamp();
   }
-  if(_lastOrient.beta===0&&_lastOrient.gamma===0){
-    show('Sensor initializing… try again in a moment.');return;
-  }
-  _orientRef={beta:_lastOrient.beta,gamma:_lastOrient.gamma};
-  S.phoneOffset={x:0,y:0};
-  if(!_orientTimer){
-    _orientTimer=setInterval(()=>{
-      if(S.ready&&S.roomId&&_orientRef){
-        write({phoneOrient:{ox:+(S.phoneOffset.x||0).toFixed(3),oy:+(S.phoneOffset.y||0).toFixed(3)}});
-      }
-    },500);
-  }
-  $('#calibrateBtn').classList.add('active');
-  show('Position set! Move the phone to guide the sphere.');
+  return next;
+}
+async function remoteWrite(patch){await write(startMusicPatch(patch))}
+async function sendGo(){const ev={color:S.remoteColor,at:Date.now()};addVisitorParticle(ev.color);newColor();if(S.ready&&S.roomId)await remoteWrite({lastParticle:ev})}
+function reduceMusicVolume(){
+  const v=clamp(S.musicVolume*.4,0,1);
+  applyMusicVolume(v);
+  remoteWrite({musicVolume:v});
 }
 
 // ——— Event listeners ————————————————————————————————————————————————————————
@@ -1665,21 +1655,13 @@ $('#startRemote').onclick=()=>startRemote('');
 $('#homeFromPresentation').onclick=goHome;
 $('#homeFromRemote').onclick=goHome;
 $('#fullScreenButton').onclick=enterPresentationFullscreen;
-$('#musicButton').onclick=()=>{const next=!S.music;applyMusic(next);if(S.ready&&S.roomId)write({music:next})};
-$('#previousChapter').onclick=()=>write({scene:Math.max(1,S.chapter-1)});
-$('#nextChapter').onclick=()=>write({scene:Math.min(TOTAL,S.chapter+1)});
-$('#toggleFullscreen').onclick=()=>{
-  const next=!S.immersive;
-  write({immersive:next});
-  if(document.documentElement.requestFullscreen){
-    if(next&&!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-    else if(!next&&document.fullscreenElement) document.exitFullscreen().catch(()=>{});
-  }
-};
-$('#toggleMusic').onclick=()=>write({music:!S.music});
-$('#musicVolume').oninput=e=>{const v=(+e.currentTarget.value||0)/100;applyMusicVolume(v);write({musicVolume:v})};
-$('#sphereGallery').onclick=()=>write({gallery:!S.gallery});
-$('#calibrateBtn').onclick=calibratePhone;
+$('#musicButton').onclick=()=>{const next=!S.music;if(S.ready&&S.roomId)write(startMusicPatch({music:next}));else applyMusic(next,next?serverNow():S.musicStartAt)};
+$('#previousChapter').onclick=()=>remoteWrite({scene:Math.max(1,S.chapter-1)});
+$('#nextChapter').onclick=()=>remoteWrite({scene:Math.min(TOTAL,S.chapter+1)});
+$('#toggleMusic').onclick=()=>remoteWrite({music:!S.music});
+$('#musicVolume').oninput=e=>{const v=(+e.currentTarget.value||0)/100;applyMusicVolume(v);remoteWrite({musicVolume:v})};
+$('#reduceMusic').onclick=reduceMusicVolume;
+$('#sphereGallery').onclick=()=>remoteWrite({gallery:!S.gallery});
 $('#manualRoomConnect').onclick=()=>startRemote($('#manualRoomInput').value);
 $('#manualRoomInput').onkeydown=e=>{if(e.key==='Enter')startRemote(e.currentTarget.value)};
 document.addEventListener('keydown',e=>{
@@ -1688,13 +1670,12 @@ document.addEventListener('keydown',e=>{
   if(['ArrowRight','PageDown',' '].includes(e.key))write({scene:Math.min(TOTAL,S.chapter+1)});
   if(['ArrowLeft','PageUp'].includes(e.key))write({scene:Math.max(1,S.chapter-1)});
   if(e.key.toLowerCase()==='b')write({blackScreen:!S.black});
-  if(e.key.toLowerCase()==='f')write({immersive:!S.immersive});
-  if(e.key.toLowerCase()==='m'){const next=!S.music;applyMusic(next);if(S.ready&&S.roomId)write({music:next})}
+  if(e.key.toLowerCase()==='f'){S.immersive?exitPresentationFullscreen():enterPresentationFullscreen();return}
+  if(e.key.toLowerCase()==='m'){const next=!S.music;if(S.ready&&S.roomId)write(startMusicPatch({music:next}));else applyMusic(next,next?serverNow():S.musicStartAt)}
 });
 document.addEventListener('fullscreenchange',()=>{
   if(!document.fullscreenElement && S.immersive){
     applyImmersive(false);
-    if(S.ready&&S.roomId) write({immersive:false});
   }
 });
 
