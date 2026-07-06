@@ -1,0 +1,360 @@
+================================================================
+    Gospel Bracelet Presentation — User Manual (English)
+================================================================
+File: gospel_bracelet_presentation.html
+Home screen verse: John 3:16
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 1. Overview
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Gospel Bracelet Presentation is a tool that presents the
+8 chapters of the Gospel Bracelet through cinematic
+particle animations.
+
+  - The presentation screen (projector/PC) and smartphone
+    remote are synchronized in real time via Firebase.
+  - Multiple remotes and multiple presentation screens can
+    be connected simultaneously using the same 4-digit code.
+  - An internet connection is required.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 2. Home Screen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+When you open the app, John 3:16 and two buttons appear.
+
+  [Presentation]  → Go to the presentation screen
+  [Remote]        → Go to the remote control screen
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 3. Presentation Screen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+────────────────────────────────────────────────
+3-1. Getting Started
+────────────────────────────────────────────────
+1. Click [Presentation]
+2. Enter a 4-digit code (any number from 0000 to 9999)
+   ※ Remotes using the same code will control this screen
+3. Click [Start]
+4. The presentation opens at Chapter 1 (Standby)
+
+
+────────────────────────────────────────────────
+3-2. On-Screen Buttons
+────────────────────────────────────────────────
+[ Top Left ]
+  ↩   Return to home screen
+  ♬   Toggle background music (glows yellow when active)
+
+[ Top Right ]
+  ⛶   Enter fullscreen / immersive mode
+       The UI fades out. Press Esc or click again to exit.
+
+[ Bottom Right ]
+  QR panel  — QR code and room code for remotes to scan
+  Chapter   — Current chapter / total chapters
+
+
+────────────────────────────────────────────────
+3-3. Keyboard Shortcuts (presentation screen only)
+────────────────────────────────────────────────
+  →  /  Space  /  PageDown   Next chapter
+  ←  /  PageUp               Previous chapter
+  B                           Toggle blackout (full black screen)
+  F                           Toggle fullscreen
+  M                           Toggle background music
+  Esc                         Exit fullscreen
+
+
+────────────────────────────────────────────────
+3-4. Code Entry Popup
+────────────────────────────────────────────────
+  - Enter any 4-digit number between 0000 and 9999
+  - Type one digit per box (cursor moves automatically)
+  - You can paste a 4-digit number directly
+  - The remote must use the same code to connect
+  - [Cancel] to go back / [Start] to begin
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 4. Remote Control Screen — Detailed Guide
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+────────────────────────────────────────────────
+4-1. Connecting the Remote
+────────────────────────────────────────────────
+Method 1 — QR Code Scan (recommended)
+  1. Scan the QR code shown in the bottom-right of the
+     presentation screen with your smartphone
+  2. The browser opens and connects automatically
+
+Method 2 — Manual Code Entry
+  1. Click [Remote] on the home screen
+  2. Enter the same 4-digit code as the presentation screen
+     in the input field at the top
+  3. Click [Connect]
+
+On successful connection:
+  - The code input field disappears
+  - The status card appears (Page / Bead / Screens)
+  - The "Connected Code" area shows a green dot (●) and "Connected"
+
+
+────────────────────────────────────────────────
+4-2. Status Card (shown after connecting)
+────────────────────────────────────────────────
+Three pieces of information are shown at the top after connecting:
+
+  [ Page ]    Current chapter number / total chapters
+              Example: 3 / 8
+
+  [ Bead ]    A colored circle showing the current chapter's
+              bead color:
+                1 Standby             — White
+                2 Beginning           — White
+                3 Yellow — Heaven     — Gold
+                4 Black — Sin         — Black
+                5 Red — Blood...      — Red
+                6 White 1 — Forg.     — White
+                7 White 2 — Next?     — White
+                8 Green — Growth      — Green
+
+  [ Screens ] Number of presentation screens currently
+              connected with this code
+              (only counts screens in Presentation mode,
+               not Remote mode)
+
+
+────────────────────────────────────────────────
+4-3. Connection Info Card
+────────────────────────────────────────────────
+  Connected Code   Shows the active 4-digit room code
+  ● Connected      Green = connected / Red = disconnected
+  ♬ ────── 72%    Background music volume slider
+                   Drag left or right to adjust volume
+
+
+────────────────────────────────────────────────
+4-4. Remote Control Buttons (2×2 layout)
+────────────────────────────────────────────────
+  ┌─────────────┐  ┌─────────────┐
+  │      ◀      │  │      ▶      │
+  │   Page Up   │  │  Page Down  │
+  └─────────────┘  └─────────────┘
+  ┌─────────────┐  ┌─────────────┐
+  │      ♬      │  │      ⊙      │
+  │ Music On/Off│  │   5 Colors  │
+  └─────────────┘  └─────────────┘
+
+  [ ◀ Page Up ]
+    Move to the previous chapter.
+    Does nothing when already on chapter 1.
+
+  [ ▶ Page Down ]
+    Move to the next chapter.
+    Does nothing when already on chapter 8.
+
+  [ ♬ Music On / Off ]
+    Toggle the background music on or off.
+    The button glows yellow when music is playing.
+    When turned on for the first time, a server timestamp
+    is recorded so all presentation screens play music
+    in sync.
+
+  [ ⊙ 5 Colors ]
+    Toggle the Gospel Bracelet gallery view, which
+    displays all 5 bead colors side by side:
+    Gold · Black · Red · White · Green
+    Press again to close the gallery.
+
+
+────────────────────────────────────────────────
+4-5. Remote Control Tips
+────────────────────────────────────────────────
+  - Background music only plays on the presentation screen.
+    The remote controls music but does not play it.
+  - Use the volume slider to lower music when speaking
+    during the presentation.
+  - Multiple people can each open a remote on their own
+    smartphone and control the presentation simultaneously.
+  - If the connection drops (red dot), refresh the page
+    and re-enter the code.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 5. Chapter Guide
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Ch 1   Standby
+         White sphere, starry universe background.
+         Use as a standby screen before the presentation begins.
+
+  Ch 2   Beginning
+         The sphere spins faster and faster, then explodes.
+         (~6 second animation)
+
+  Ch 3   Yellow — Heaven
+         Scattered particles gather back into a golden sphere.
+         Represents heaven and God's perfection.
+
+  Ch 4   Black — Sin
+         The golden sphere gradually darkens and turns black.
+         Depicts the fall caused by sin.
+
+  Ch 5   Red — The Blood of Jesus
+         The dark sphere fills with red, in a rainy alley.
+         Symbolizes the blood of Jesus Christ.
+
+  Ch 6   White 1 — Forgiveness
+         The red sphere turns white and rises upward.
+         Represents forgiveness of sin and salvation.
+
+  Ch 7   White 2 — What's Next?
+         A white sphere rests on a bare soil hill.
+         The image of a seed — life after faith.
+
+  Ch 8   Green — Growth
+         The sphere turns green; flowers and sprouts grow on the hill.
+         New life and growth in the Holy Spirit.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 6. Deploying with GitHub Pages (for new users)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GitHub Pages lets you host this app for free online.
+No coding knowledge required — just a browser.
+
+Your URL after deployment:
+  https://your-username.github.io/gospel-bracelet/gospel_bracelet_presentation.html
+
+
+────────────────────────────────────────────────
+6-1. Create a GitHub Account (skip if you have one)
+────────────────────────────────────────────────
+1. Go to https://github.com
+2. Click [Sign up]
+3. Enter your email, password, and a username (letters/numbers)
+   ※ Your username becomes part of the URL, keep it simple
+
+
+────────────────────────────────────────────────
+6-2. Create a New Repository
+────────────────────────────────────────────────
+1. After logging in, click [+] → [New repository]
+2. Repository name: gospel-bracelet
+3. Select Public (required for free hosting)
+4. Click [Create repository]
+
+
+────────────────────────────────────────────────
+6-3. Upload Files
+────────────────────────────────────────────────
+1. On the repository page, click [Add file] → [Upload files]
+2. Upload the following files:
+     gospel_bracelet_presentation.html   (required)
+     Pray - David Tolk.mp3              (optional, for music)
+3. Click [Commit changes]
+
+
+────────────────────────────────────────────────
+6-4. Enable GitHub Pages
+────────────────────────────────────────────────
+1. Click [Settings] on the repository page
+2. Click [Pages] in the left sidebar
+3. Under Source, select Branch → main, folder: / (root)
+4. Click [Save]
+5. After a minute, a green banner appears with your live URL
+
+
+────────────────────────────────────────────────
+6-5. Updating Files
+────────────────────────────────────────────────
+1. [Add file] → [Upload files] on the repository page
+2. Upload the updated HTML file (same filename overwrites)
+3. Click [Commit changes] — updates appear within 1–2 min
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 7. Firebase Management
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Console: https://console.firebase.google.com/
+Project: mongpj1
+
+────────────────────────────────────────────────
+Realtime Database Structure
+────────────────────────────────────────────────
+  rooms/
+    {4-digit-code}/
+      scene: 1–8        Current chapter number
+      blackScreen:      Whether blackout is active
+      gallery:          Whether gallery is showing
+      music:            Whether music is playing
+      musicVolume: 0.72 Volume (0.0–1.0)
+      musicStartAt: 0   Music start server timestamp
+      screens/          Connected presentation screens
+        {screenId}: true
+
+────────────────────────────────────────────────
+Security Rules (Realtime Database → Rules)
+────────────────────────────────────────────────
+  {
+    "rules": {
+      ".read": true,
+      ".write": true
+    }
+  }
+
+────────────────────────────────────────────────
+Free Tier (Spark Plan)
+────────────────────────────────────────────────
+  100 simultaneous connections / 1 GB storage / 10 GB/month
+  More than sufficient for Gospel Bracelet presentations.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Part 8. Frequently Asked Questions
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Q. The remote won't connect.
+A. Make sure the remote and the presentation screen use
+   the same 4-digit code. Also check your internet connection.
+   If the red dot persists, refresh the page and re-enter the code.
+
+Q. The QR code doesn't work.
+A. You must open the app from a GitHub Pages URL (https://)
+   for the QR code to be scannable. A local file (file://)
+   generates a QR code that only works on the same device.
+
+Q. The background music won't play.
+A. Browser autoplay policies block audio without user input.
+   Click the ♬ button on the presentation screen directly,
+   or press Music On/Off on the remote.
+
+Q. The mp3 file isn't playing.
+A. The mp3 must be in the same folder as the HTML file
+   (or in an audio/ subfolder). Make sure you uploaded it
+   to GitHub as well.
+
+Q. I want to black out the screen temporarily.
+A. Press B on the keyboard while on the presentation screen.
+   Press B again to restore the presentation.
+
+Q. How do I control multiple presentation screens at once?
+A. Open all presentation screens with the same 4-digit code.
+   Use the Screens indicator on the remote to confirm
+   how many screens are connected.
+
+Q. The Screens count shows 0.
+A. Screens counts only devices in Presentation mode.
+   Devices in Remote mode are not counted.
+
+================================================================
+    Gospel Bracelet Presentation — English User Manual End
+================================================================
