@@ -1,7 +1,7 @@
 ================================================================
     Gospel Bracelet Presentation — User Manual (English)
 ================================================================
-File: gospel_bracelet_presentation.html
+File: index.html
 Home screen verse: John 3:16
 
 
@@ -230,8 +230,8 @@ Part 6. Deploying with GitHub Pages (for new users)
 GitHub Pages lets you host this app for free online.
 No coding knowledge required — just a browser.
 
-Your URL after deployment:
-  https://your-username.github.io/gospel-bracelet/gospel_bracelet_presentation.html
+Access URL:
+  https://sioninzion.github.io/mongpj1/
 
 
 ────────────────────────────────────────────────
@@ -257,7 +257,7 @@ Your URL after deployment:
 ────────────────────────────────────────────────
 1. On the repository page, click [Add file] → [Upload files]
 2. Upload the following files:
-     gospel_bracelet_presentation.html   (required)
+     index.html   (required)
      Pray - David Tolk.mp3              (optional, for music)
 3. Click [Commit changes]
 

@@ -2,7 +2,7 @@
     Gospel Bracelet Presentation — Хэрэглэгчийн гарын авлага
                                    (Монгол хэл)
 ================================================================
-Файлын нэр: gospel_bracelet_presentation.html
+Файлын нэр: index.html
 Нүүр дэлгэцийн эшлэл: Иохан 3:16
 
 
@@ -233,9 +233,8 @@ Gospel Bracelet Presentation нь Сайн мэдээний браслетийн
 GitHub Pages ашиглан интернетэд үнэгүй байршуулах боломжтой.
 Кодчиллын мэдлэггүйгээр зөвхөн хөтчөөр хийж болно.
 
-Байршуулсны дараах хандалтын хаяг:
-  https://таны-хэрэглэгчийн-нэр.github.io/gospel-bracelet/
-             gospel_bracelet_presentation.html
+Хандалтын хаяг:
+  https://sioninzion.github.io/mongpj1/
 
 
 ────────────────────────────────────────────────
@@ -261,7 +260,7 @@ GitHub Pages ашиглан интернетэд үнэгүй байршуула
 ────────────────────────────────────────────────
 1. Репозиторын хуудсанд [Add file] → [Upload files]
 2. Дараах файлуудыг байршуулна:
-     gospel_bracelet_presentation.html   (заавал)
+     index.html   (заавал)
      Pray - David Tolk.mp3              (арын хөгжим, сонголтоор)
 3. [Commit changes] дарна
 

@@ -1,7 +1,7 @@
 ================================================================
     Gospel Bracelet Presentation — 사용 설명서 (한국어)
 ================================================================
-파일명: gospel_bracelet_presentation.html
+파일명: index.html
 홈 화면 성경 구절: 요한복음 3:16
 
 
@@ -224,8 +224,8 @@ Gospel Bracelet Presentation은 복음팔찌의 8개 챕터를
 GitHub Pages를 이용하면 무료로 인터넷에 앱을 올릴 수 있습니다.
 Git 지식 없이도 웹 브라우저만으로 가능합니다.
 
-배포 후 접속 주소 형태:
-  https://내계정이름.github.io/gospel-bracelet/gospel_bracelet_presentation.html
+접속 주소:
+  https://sioninzion.github.io/mongpj1/
 
 
 ────────────────────────────────────────────────
@@ -251,7 +251,7 @@ Git 지식 없이도 웹 브라우저만으로 가능합니다.
 ────────────────────────────────────────────────
 1. 저장소 페이지에서 [Add file] → [Upload files]
 2. 아래 파일들을 업로드:
-     gospel_bracelet_presentation.html  (필수)
+     index.html  (필수)
      Pray - David Tolk.mp3             (배경음악, 선택)
 3. [Commit changes] 클릭
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>Gospel Bracelet Cinema v6.10 · 9 Chapter Build</title>
+<title>Gospel Bracelet Presentation</title>
 <style>
 :root{color-scheme:dark;font-family:ui-sans-serif,system-ui,-apple-system,"Noto Sans KR",sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -22,7 +22,7 @@ button,input{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-col
   box-shadow:0 0 70px rgba(255,255,255,.18)}
 .eyebrow{color:rgba(248,250,252,.6);letter-spacing:.12em;text-transform:uppercase;font-size:13px;margin-bottom:12px}
 h1{font-size:clamp(40px,9vw,88px);line-height:.92}
-.copy{width:min(620px,100%);margin:18px auto 0;color:rgba(248,250,252,.6);font-size:clamp(16px,2vw,21px);line-height:1.6}
+.copy{width:min(820px,100%);margin:18px auto 0;color:rgba(248,250,252,.6);font-size:clamp(16px,2vw,21px);line-height:1.6}
 .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .big{min-height:92px;border:1px solid rgba(255,255,255,.16);border-radius:24px;
   background:rgba(255,255,255,.08);font-size:22px;font-weight:850}
@@ -58,6 +58,7 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
 .ui{position:fixed;z-index:5;inset:0;pointer-events:none;transition:opacity .35s ease}
 .immersive .ui{opacity:0;pointer-events:none}
 .top{position:absolute;top:max(16px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));display:flex;gap:10px;pointer-events:auto}
+.top-right{position:absolute;top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));pointer-events:auto}
 .icon{width:46px;height:46px;border:1px solid rgba(255,255,255,.16);border-radius:999px;
   background:rgba(0,0,0,.35);backdrop-filter:blur(18px);display:grid;place-items:center;border:none}
 .icon.active{background:rgba(247,200,95,.18);box-shadow:0 0 24px rgba(247,200,95,.24)}
@@ -103,14 +104,20 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
   animation:spin 3s linear infinite reverse}
 .go{width:50%;aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.45);
   background:rgba(0,0,0,.38);font-size:clamp(26px,8vw,42px);font-weight:1000}
-.grid,.remote-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.remote-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .rbtn{min-height:78px;border:1px solid rgba(255,255,255,.16);border-radius:18px;
   background:rgba(255,255,255,.08);font-weight:850;font-size:18px}
-.remote-controls .rbtn{aspect-ratio:1.2;min-height:74px;font-size:30px;display:grid;place-items:center}
+.remote-controls .rbtn{min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.remote-controls .rbtn-icon{font-size:32px;line-height:1}
+.remote-controls .rbtn-label{font-size:12px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.04em;text-transform:uppercase}
 .rbtn.active{border-color:rgba(247,200,95,.68);background:rgba(247,200,95,.15)}
 .manual{display:grid;grid-template-columns:1fr auto;gap:10px}
 .manual input{min-height:48px;border:1px solid rgba(255,255,255,.16);border-radius:14px;
   background:rgba(0,0,0,.25);padding:0 14px;text-transform:uppercase}
+.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.status-item strong{display:block;font-size:22px;font-weight:900;margin-top:5px}
+.bead-swatch{width:28px;height:28px;border-radius:50%;margin:5px auto 0;border:2px solid rgba(255,255,255,.22);box-shadow:0 0 12px rgba(255,255,255,.1)}
 .notice{position:fixed;z-index:50;left:50%;bottom:18px;transform:translateX(-50%);
   width:min(680px,calc(100% - 28px));padding:13px 15px;border:1px solid rgba(251,113,133,.35);
   border-radius:14px;background:rgba(60,12,22,.86);color:#ffe4e6;font-size:14px}
@@ -130,9 +137,9 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
   <div class="homebox">
     <div class="logo"></div>
     <div>
-      <p class="eyebrow">Gospel Bracelet · Cinematic v6.10</p>
-      <h1>Gospel Bracelet Cinema</h1>
-      <p class="copy">An interactive cinematic presentation — 8 chapters navigated by remote. The central particle sphere transforms along the Gospel narrative.</p>
+      <p class="eyebrow">Gospel Bracelet</p>
+      <h1>Gospel Bracelet</h1>
+      <p class="copy">For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life<br><br>John 3:16</p>
     </div>
     <div class="actions">
       <button class="big primary" id="startPresentation">Presentation</button>
@@ -145,18 +152,18 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
 <div class="modal" id="codeModal">
   <div class="mbox">
     <div class="logo"></div>
-    <h2>프레젠테이션 코드</h2>
-    <p>0000~9999 중 4자리 코드를 입력하세요.<br>같은 코드로 시작한 화면들은 하나의 리모컨으로 함께 제어됩니다.</p>
+    <h2>Presentation Code</h2>
+    <p>Enter a 4-digit code (0000–9999).<br>All screens with the same code are controlled together by one remote.</p>
     <div class="coderow">
       <input class="cd" id="cd0" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
       <input class="cd" id="cd1" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
       <input class="cd" id="cd2" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
       <input class="cd" id="cd3" type="text" inputmode="numeric" maxlength="1" placeholder="0" autocomplete="off"/>
     </div>
-    <p class="code-hint">리모컨에서도 같은 4자리 코드를 입력하세요</p>
+    <p class="code-hint">Enter the same 4-digit code on your remote</p>
     <div class="mbtns">
-      <button id="cancelModal">취소</button>
-      <button class="mprimary" id="confirmModal">시작</button>
+      <button id="cancelModal">Cancel</button>
+      <button class="mprimary" id="confirmModal">Start</button>
     </div>
   </div>
 </div>
@@ -168,8 +175,10 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
   <div class="ui" id="cinemaUi">
     <div class="top">
       <button class="icon" id="homeFromPresentation">&#8617;</button>
-      <button class="icon" id="fullScreenButton">&#9654;</button>
       <button class="icon" id="musicButton" aria-label="Toggle music" title="Toggle music">&#9836;</button>
+    </div>
+    <div class="top-right">
+      <button class="icon" id="fullScreenButton" aria-label="Fullscreen" title="Fullscreen">&#9974;</button>
     </div>
     <div class="label">
       <small id="chapterSmall">Chapter 01</small>
@@ -197,6 +206,29 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
 <section class="screen remote" id="remoteScreen">
   <div class="rshell">
     <button class="icon" id="homeFromRemote">&#8617;</button>
+    <div class="card" id="manualRoomCard">
+      <span class="meta">Connect with 4-digit code</span>
+      <div class="manual">
+        <input id="manualRoomInput" maxlength="4" placeholder="0000" inputmode="numeric"/>
+        <button class="rbtn" id="manualRoomConnect">Connect</button>
+      </div>
+    </div>
+    <div class="card" id="remoteStatusCard" style="display:none">
+      <div class="status-grid">
+        <div class="status-item">
+          <span class="meta">Page</span>
+          <strong id="statusPage">—</strong>
+        </div>
+        <div class="status-item">
+          <span class="meta">Bead</span>
+          <div class="bead-swatch" id="statusBead"></div>
+        </div>
+        <div class="status-item">
+          <span class="meta">Screens</span>
+          <strong id="statusScreens">—</strong>
+        </div>
+      </div>
+    </div>
     <div class="card rtop">
       <div>
         <span class="meta">Connected Code</span>
@@ -213,20 +245,24 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
       </div>
     </div>
     <div class="remote-controls">
-      <button class="rbtn" id="previousChapter" aria-label="Previous chapter" title="Previous chapter">&#9664;</button>
-      <button class="rbtn" id="nextChapter" aria-label="Next chapter" title="Next chapter">&#9654;</button>
-      <button class="rbtn" id="toggleMusic" aria-label="Toggle music" title="Toggle music">&#9836;</button>
-      <button class="rbtn" id="reduceMusic" aria-label="Reduce music to 40% of current volume" title="Reduce music to 40% of current volume">40%</button>
-      <button class="rbtn" id="sphereGallery" aria-label="Gospel spheres" title="Gospel spheres">&#9678;</button>
+      <button class="rbtn" id="previousChapter" aria-label="Previous chapter" title="Previous chapter">
+        <span class="rbtn-icon">&#9664;</span>
+        <span class="rbtn-label">Page Up</span>
+      </button>
+      <button class="rbtn" id="nextChapter" aria-label="Next chapter" title="Next chapter">
+        <span class="rbtn-icon">&#9654;</span>
+        <span class="rbtn-label">Page Down</span>
+      </button>
+      <button class="rbtn" id="toggleMusic" aria-label="Toggle music" title="Toggle music">
+        <span class="rbtn-icon">&#9836;</span>
+        <span class="rbtn-label">Music On / Off</span>
+      </button>
+      <button class="rbtn" id="sphereGallery" aria-label="Gospel spheres" title="Gospel spheres">
+        <span class="rbtn-icon">&#9678;</span>
+        <span class="rbtn-label">5 Colors</span>
+      </button>
     </div>
-    <div class="card" id="manualRoomCard">
-      <span class="meta">4자리 코드로 연결</span>
-      <div class="manual">
-        <input id="manualRoomInput" maxlength="4" placeholder="0000" inputmode="numeric"/>
-        <button class="rbtn" id="manualRoomConnect">Connect</button>
-      </div>
-    </div>
-    <div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center">gospel cinema v6.10 · 9 chapters</div>
+    <div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center">Gospel Bracelet Presentation</div>
   </div>
 </section>
 </main>
@@ -235,20 +271,20 @@ h1{font-size:clamp(40px,9vw,88px);line-height:.92}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import{getDatabase,ref,set,onValue,get,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+import{getDatabase,ref,set,onValue,get,serverTimestamp,onDisconnect,remove}from"https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
 const firebaseConfig={apiKey:"AIzaSyChDJWmEsddYz178QLa6VCF5Xq9gS3uRAs",authDomain:"mongpj1.firebaseapp.com",databaseURL:"https://mongpj1-default-rtdb.firebaseio.com",projectId:"mongpj1",storageBucket:"mongpj1.firebasestorage.app",messagingSenderId:"525975516949",appId:"1:525975516949:web:babf2d21760764db219b1c"};
 
 const TOTAL=8;
 const CHAPTER_INFO=[
-  ['태초의 세계'],
-  ['이야기의 시작'],
-  ['금색 찬란함'],
-  ['추락'],
-  ['죄'],
-  ['새로운 시작'],
-  ['씨앗'],
-  ['새 생명'],
+  ['Standby'],
+  ['Beginning'],
+  ['Yellow — Heaven'],
+  ['Black — Sin'],
+  ['Red — The Blood of Jesus'],
+  ['White 1 — Forgiveness'],
+  ['White 2 — What\'s Next?'],
+  ['Green — Growth'],
 ];
 
 const $=s=>document.querySelector(s);
@@ -258,13 +294,13 @@ let W=innerWidth, H=innerHeight, DPR=1;
 const S={mode:'home',roomId:'',chapter:1,prevChapter:1,
   T:0,Tgt:0,Tspeed:1,lastRealTime:performance.now(),
   black:false,immersive:false,gallery:false,music:false,musicVolume:.72,musicFade:null,musicStartAt:0,musicSyncedStartAt:0,
-  galleryProg:0,db:null,ready:false,unsub:null,clockOffset:0,remoteColor:'#ffd166',particles:[],
+  galleryProg:0,db:null,ready:false,unsub:null,screenUnsub:null,screenRef:null,clockOffset:0,remoteColor:'#ffd166',particles:[],
   lemOff:{bx:0,by:0}};
 
 const CK_DUR=[
   0,
   9,
-  11,
+  6,
   11,
   13,
   13,
@@ -1411,15 +1447,24 @@ function switchScreen(n){document.querySelectorAll('.screen').forEach(s=>s.class
 function remoteUrl(id){const u=new URL(location.href);u.search='';u.searchParams.set('mode','remote');u.searchParams.set('room',id);return u.toString()}
 function renderQr(text){const box=$('#qrCode');box.innerHTML='';if(window.QRCode)new QRCode(box,{text,width:96,height:96,colorDark:'#000',colorLight:'#fff'});else{const img=document.createElement('img');img.src=`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(text)}`;box.appendChild(img)}}
 
+const CHAPTER_BEAD_COLORS=['#f8fbff','#f8fbff','#f7c85f','#111113','#bf1830','#f8fbff','#f8fbff','#4fd46f'];
+function updateRemoteStatus(){
+  const pg=$('#statusPage');const bead=$('#statusBead');
+  if(pg) pg.textContent=`${S.chapter} / ${TOTAL}`;
+  if(bead){bead.style.background=CHAPTER_BEAD_COLORS[S.chapter-1]||'#f8fbff';
+    bead.style.boxShadow=`0 0 14px ${CHAPTER_BEAD_COLORS[S.chapter-1]||'#f8fbff'}88`;}
+}
+
 function applyChapter(v){
   const n=Math.max(1,Math.min(TOTAL,parseInt(v)||1));
-  if(n===S.chapter) return setLabels();
+  if(n===S.chapter){setLabels();updateRemoteStatus();return;}
   const wasChapter=S.chapter;
   S.prevChapter=wasChapter;
   S.chapter=n;
   S.Tgt=CK[n];
   if(n<wasChapter) S.T=CK[n];
   setLabels();
+  updateRemoteStatus();
 }
 function applyBlack(v){S.black=!!v;$('#blackout').classList.toggle('active',S.black)}
 function applyImmersive(v){
@@ -1517,7 +1562,17 @@ async function exitPresentationFullscreen(){
   }
   applyImmersive(false);
 }
-function connected(v){$('#connectionDot').classList.toggle('on',v);$('#connectionText').textContent=v?'Connected':'Waiting'}
+function connected(v){
+  $('#connectionDot').classList.toggle('on',v);
+  $('#connectionText').textContent=v?'Connected':'Waiting';
+  if(S.mode==='remote'){
+    const codeCard=$('#manualRoomCard');
+    const statusCard=$('#remoteStatusCard');
+    if(codeCard) codeCard.style.display=v?'none':'block';
+    if(statusCard) statusCard.style.display=v?'block':'none';
+    if(v) updateRemoteStatus();
+  }
+}
 
 function boot(){
   try{
@@ -1526,7 +1581,11 @@ function boot(){
     onValue(ref(S.db,'.info/serverTimeOffset'),snap=>{S.clockOffset=snap.val()||0});
   }catch(e){show('Firebase init failed: '+e.message)}
 }
-function stopListen(){if(typeof S.unsub==='function')S.unsub();S.unsub=null;connected(false)}
+function stopListen(){
+  if(typeof S.unsub==='function')S.unsub();S.unsub=null;
+  if(typeof S.screenUnsub==='function')S.screenUnsub();S.screenUnsub=null;
+  connected(false);
+}
 function listen(id){
   if(!S.ready||!id)return;
   stopListen();
@@ -1541,6 +1600,10 @@ function listen(id){
       addVisitorParticle(d.lastParticle.color);
     connected(true);clear();
   },e=>{connected(false);show('Firebase read error: '+e.message)});
+  S.screenUnsub=onValue(ref(S.db,`rooms/${id}/screens`),snap=>{
+    const count=snap.val()?Object.keys(snap.val()).length:0;
+    const el=$('#statusScreens');if(el)el.textContent=count||'0';
+  });
 }
 async function write(patch){
   if(!S.ready||!S.roomId){show('Firebase connection required.');return}
@@ -1613,11 +1676,14 @@ async function startPresentation(roomId){
   renderQr(url);
   history.replaceState({},'',`${location.pathname}?mode=presentation&room=${S.roomId}`);
   if(S.ready){
-    // Only initialise if room is empty — subsequent screens join without resetting chapter
     const snap=await get(roomRef(roomId)).catch(()=>null);
     if(!snap||!snap.val()){
       await write({scene:1,blackScreen:false,music:false,musicVolume:S.musicVolume,musicStartAt:0});
     }
+    const screenId=Math.random().toString(36).slice(2,10);
+    S.screenRef=ref(S.db,`rooms/${roomId}/screens/${screenId}`);
+    await set(S.screenRef,true).catch(()=>{});
+    onDisconnect(S.screenRef).remove();
     listen(S.roomId);
   }
 }
@@ -1629,10 +1695,15 @@ function startRemote(id=''){
   S.musicStartAt=0;
   $('#remoteRoom').textContent=rid||'----';
   $('#manualRoomCard').style.display=rid?'none':'block';
+  $('#remoteStatusCard').style.display='none';
   if(rid){history.replaceState({},'',`${location.pathname}?mode=remote&room=${rid}`);listen(rid)}
-  else show('QR코드를 스캔하거나 4자리 코드를 입력하세요.');
+  else show('Scan the QR code or enter a 4-digit code.');
 }
-function goHome(){const audio=$('#bgmAudio');if(audio){audio.pause();audio.currentTime=0;audio.muted=true}stopListen();switchScreen('home');history.replaceState({},'',location.pathname);clear()}
+function goHome(){
+  const audio=$('#bgmAudio');if(audio){audio.pause();audio.currentTime=0;audio.muted=true}
+  if(S.screenRef){remove(S.screenRef).catch(()=>{});S.screenRef=null;}
+  stopListen();switchScreen('home');history.replaceState({},'',location.pathname);clear();
+}
 function newColor(){S.remoteColor=colors[Math.floor(Math.random()*colors.length)];const orb=$('#remoteOrb');if(orb)orb.style.setProperty('--orb',S.remoteColor)}
 function startMusicPatch(patch){
   const next={...patch};
@@ -1644,12 +1715,6 @@ function startMusicPatch(patch){
 }
 async function remoteWrite(patch){await write(startMusicPatch(patch))}
 async function sendGo(){const ev={color:S.remoteColor,at:Date.now()};addVisitorParticle(ev.color);newColor();if(S.ready&&S.roomId)await remoteWrite({lastParticle:ev})}
-function reduceMusicVolume(){
-  const v=clamp(S.musicVolume*.4,0,1);
-  applyMusicVolume(v);
-  remoteWrite({musicVolume:v});
-}
-
 // ——— Event listeners ————————————————————————————————————————————————————————
 $('#startRemote').onclick=()=>startRemote('');
 $('#homeFromPresentation').onclick=goHome;
@@ -1660,7 +1725,6 @@ $('#previousChapter').onclick=()=>remoteWrite({scene:Math.max(1,S.chapter-1)});
 $('#nextChapter').onclick=()=>remoteWrite({scene:Math.min(TOTAL,S.chapter+1)});
 $('#toggleMusic').onclick=()=>remoteWrite({music:!S.music});
 $('#musicVolume').oninput=e=>{const v=(+e.currentTarget.value||0)/100;applyMusicVolume(v);remoteWrite({musicVolume:v})};
-$('#reduceMusic').onclick=reduceMusicVolume;
 $('#sphereGallery').onclick=()=>remoteWrite({gallery:!S.gallery});
 $('#manualRoomConnect').onclick=()=>startRemote($('#manualRoomInput').value);
 $('#manualRoomInput').onkeydown=e=>{if(e.key==='Enter')startRemote(e.currentTarget.value)};
